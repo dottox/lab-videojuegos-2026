@@ -31,5 +31,5 @@ proyecto/
 ├── build/                # Binarios y cartuchos generados
 │   └── game.p8           # Resultado final compilado
 ├── Makefile              # Automatización de build y watch
-└── .gitignore            # Archivos ignorados (ej: .venv, build/)
+└── .gitignore            # Archivos ignorados (ej: .venv)
 ```
