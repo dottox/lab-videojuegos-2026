@@ -4,6 +4,7 @@ luac.out
 # Docker
 **/dockerfile
 **/docker-compose.yml
+build/
 
 # luarocks build files
 *.src.rock
