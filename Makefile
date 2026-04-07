@@ -11,7 +11,7 @@ setup:
 	sudo apt install entr -y
 
 build:
-	rm build/game.p8
+	rm -f build/game.p8
 	shrinko8 src/main.lua --merge assets/assets.p8 gfx,map,gff,sfx,music -f p8 build/game.p8
 
 watch:
