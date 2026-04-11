@@ -44,4 +44,5 @@ dockerfile
 docker-compose.yml
 
 .venv/
+build
 

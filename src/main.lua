@@ -59,7 +59,7 @@ function _draw()
   
   -- Dibujar trれくfico
   for pkt in all(traffic) do
-    circfill(pkt.x, pkt.y, 2, 9)
+    circfill(pkt.x, pkt.y, 2, 10)
   end
   
   -- HUD
