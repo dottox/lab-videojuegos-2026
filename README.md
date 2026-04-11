@@ -6,10 +6,9 @@ Laboratorio de Videojuegos 2026
 Clona el repositorio y muevete a la root del proyecto.
 
 1. **Usa `make setup` para instalar las dependecias.**
-2. **Usa `make watch` para iniciar el hot-reload.** Cada vez que hagas un cambio en `src/` o `assets/` se va a crear la nueva build (`game.p8`)
-3. **Organiza un setup parecido al de la imagen de abajo.** Puedes codear en un IDE, y desde el explorador mover el `game.p8` hacia Pico-8 Edu. Luego utiliza `RUN` en la terminal de Pico-8 para correr el juego.
-
-![Dev Setup](readme-images/dev-setup.png)
+2. **Usa `make run` para correr Pico8** (debes añadirlo al PATH)
+3. **Usa `make watch` para iniciar el hot-reload.** Cada vez que hagas un cambio en `src/` o `assets/` se va a crear la nueva build.
+4. Cada vez que se cree una nueva build. **Usa `Control+R` dentro de Pico8 para obtener los nuevos cambios.**
 
 ---------------------
 

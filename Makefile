@@ -10,12 +10,13 @@ setup:
 	pip install shrinko; \
 	sudo apt install entr -y; \
 	echo "\n### EJECUTA 'source .venv/bin/activate' PARA UTILIZAR LOS DEMAS COMANDOS ###\n"
-	echo "### ABRE UNA TERMINAL Y EJECUTA 'make watch', Y EN OTRA TERMINAL 'make run' ###\n" 
+	echo "### ABRE UNA TERMINAL Y EJECUTA 'make run', Y EN OTRA TERMINAL 'make watch' ###\n" 
 
 build:
 	mkdir -p build
 	rm -f build/game.p8
 	shrinko8 src/main.lua --merge assets/assets.p8 gfx,map,gff,sfx,music -f p8 build/game.p8
+	echo "\n### BUILD ACTUALIZADA: USA CONTROL+R EN PICO8 PARA VER LOS CAMBIOS ###\n"
 
 run: build
 	pico8 build/game.p8
