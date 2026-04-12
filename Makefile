@@ -1,4 +1,11 @@
-.PHONY: setup build watch run
+.PHONY: setup build watch run gen_levels
+
+gen_levels:
+	@PYTHON_BIN=$$(command -v python3 || command -v python); \
+	if [ -z "$$PYTHON_BIN" ]; then \
+		echo "Error: Python is not installed."; exit 1; \
+	fi; \
+	$$PYTHON_BIN src/levels/level_encoder.py; \
 
 setup:
 	@PYTHON_BIN=$$(command -v python3 || command -v python); \
