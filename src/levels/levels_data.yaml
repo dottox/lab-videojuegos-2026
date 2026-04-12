@@ -1,0 +1,32 @@
+levels:
+- level_id: 1
+  boss_sprite: 1
+  music_id: 1
+  bpm: 120
+  duration_ms: 180000
+  patterns:
+  - id: 0
+    name: star
+    projectiles:
+      - { ts: 0,   x: 0,   y: 0,   velX: 1, velY: 1, type: 1 }
+      - { ts: 0,   x: 15,  y: -15, velX: 1, velY: 1, type: 1 }
+      - { ts: 0,   x: 15,  y: 15,  velX: 1, velY: 1, type: 1 }
+      - { ts: 0,   x: -15, y: -15, velX: 1, velY: 1, type: 1 }
+      - { ts: 0,   x: -15, y: 15,  velX: 1, velY: 1, type: 1 }
+  - id: 1
+    name: wave
+    projectiles:
+      - { ts: 0,   x: -30, y: 0,   velX: 2, velY: 0, type: 1 }
+      - { ts: 30,  x: -15, y: 0,   velX: 2, velY: 0, type: 1 }
+      - { ts: 60,  x: 0,   y: 0,   velX: 2, velY: 0, type: 1 }
+      - { ts: 90,  x: 15,  y: 0,   velX: 2, velY: 0, type: 1 }
+      - { ts: 120, x: 30,  y: 0,   velX: 2, velY: 0, type: 1 }
+  projectiles:
+  - { ts: 1000, pattern_id: 0, x: 30, y: 80 }
+  - { ts: 2000, pattern_id: 1, x: 64, y: 100 }
+  - { ts: 3000, pattern_id: 0, x: 100, y: 80 }
+  - { ts: 4500, pattern_id: 1, x: 50, y: 90 }
+  - { ts: 6000, pattern_id: 0, x: 70, y: 85 }
+  - { ts: 7500, pattern_id: 1, x: 40, y: 95 }
+  - { ts: 9000, pattern_id: 0, x: 110, y: 75 }
+  - { ts: 10500, pattern_id: 1, x: 60, y: 100 }

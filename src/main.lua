@@ -1,68 +1,90 @@
--- PICO-8 Load Balancer MVP
+-- ============================================
+-- PROJECTILE SPAWN TEST - PICO-8
+-- ============================================
+
+#include configs/game_config.lua
+#include configs/gameplay_config.lua
+#include levels/levels_data.lua
+#include entities/pattern.lua
+#include entities/projectile.lua
+#include utility/hex_utils.lua
+
+SCALE_MS = 10
+
 function _init()
-  servers = {
-    {x=30, y=40, load=0, cap=50},
-    {x=64, y=40, load=0, cap=60},
-    {x=98, y=40, load=0, cap=50}
-  }
-  traffic = {}
-  score = 0
-  selected = 1
+    game_time_ms = 0
+    current_level = 1
+    
+    -- Load and decode level
+    load_level(current_level)
+    
+    -- Projectile system
+    active_projectiles = {}
+    next_spawn_idx = 1
+    
+    -- Debug
+    spawned_count = 0
 end
 
 function _update()
-  -- Controles
-  if btnp(0) then selected = max(1, selected - 1) end
-  if btnp(1) then selected = min(3, selected + 1) end
-  
-  -- Spawn trれくfico
-  if rnd() < 0.02 then
-    add(traffic, {x=64, y=10, size=rnd(20)+5})
-  end
-  
-  -- Mover trれくfico
-  for pkt in all(traffic) do
-    pkt.y += 1
+    game_time_ms += 16.67
     
-    -- Llegれは a servidor?
-    if pkt.y > 35 then
-      if servers[selected].load + pkt.size <= servers[selected].cap then
-        servers[selected].load += pkt.size
-        score += pkt.size
-        del(traffic, pkt)
-      else
-        -- Game Over
-        print("overflow!", 50, 64, 8)
-      end
-    end
-  end
-  
-  -- Descargar servidores
-  for srv in all(servers) do
-    srv.load = max(0, srv.load - 0.3)
-  end
+    -- Spawn new projectiles based on timing
+    spawn_projectiles()
+    
+    -- Update active projectiles
+    update_projectiles()
 end
 
 function _draw()
-  cls(0)
-  
-  -- Dibujar servidores
-  for i=1,3 do
-    local srv = servers[i]
-    local col = 7
-    if i == selected then col = 10 end
-    if srv.load > srv.cap * 0.8 then col = 8 end
+    cls(0)
     
-    circfill(srv.x, srv.y, 7, col)
-    print(srv.load/10, srv.x-4, srv.y-3, 7)
-  end
-  
-  -- Dibujar trれくfico
-  for pkt in all(traffic) do
-    circfill(pkt.x, pkt.y, 2, 10)
-  end
-  
-  -- HUD
-  print("score:"..score, 5, 5, 7)
-  print("select:"..selected, 5, 120, 7)
+    -- Draw time
+    printh("time: "..(game_time_ms/1000).."s", 2, 2, 7)
+    printh("spawned: "..spawned_count, 2, 10, 7)
+    printh("active: "..#active_projectiles, 2, 18, 7)
+    
+    -- Draw active projectiles
+    draw_projectiles()
+    
+    -- Draw level info
+    printh("level: "..current_level, 2, 110, 7)
+end
+
+-- ============================================
+-- LEVEL LOADING
+-- ============================================
+
+function load_level(level_id)
+    level_data = LEVEL_DATA[level_id]
+    
+    if not level_data then
+        printh("ERROR: Level "..level_id.." not found!")
+        return
+    end
+    
+    -- Decode patterns
+    patterns = decode_patterns(level_data.patterns)
+    
+    -- Decode projectiles
+    projectiles_to_spawn = decode_projectiles(level_data.projectiles, patterns)
+    
+    printh("Level loaded with "..#projectiles_to_spawn.." projectiles")
+end
+
+-- ============================================
+-- UTILITY
+-- ============================================
+
+function add(t, item)
+    t[#t + 1] = item
+end
+
+function del(t, item)
+    for i = #t, 1, -1 do
+        if t[i] == item then
+            table.remove(t, i)
+            break
+        end
+    end
 end
