@@ -1,0 +1,9 @@
+levels:
+- level_id: 1
+  boss_sprite: 1
+  music_id: 1
+  bpm: 120
+  projectiles:
+    - { ts: 1, x: 64,  y: 100, velX: 0, velY: 5, type: 1 }
+    - { ts: 2, x: 100, y: 64,  velX: 5, velY: 0, type: 2 }
+    - { ts: 1, x: 32,  y: 128, velX: 2, velY: 1, type: 0 }
