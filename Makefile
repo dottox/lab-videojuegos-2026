@@ -14,7 +14,7 @@ setup:
 	fi; \
 	$$PYTHON_BIN -m venv .venv; \
 	. .venv/bin/activate; \
-	pip install shrinko; \
+	pip install shrinko pyyaml; \
 	sudo apt install entr -y; \
 	echo "\n### EJECUTA 'source .venv/bin/activate' PARA UTILIZAR LOS DEMAS COMANDOS ###\n"
 	echo "### ABRE UNA TERMINAL Y EJECUTA 'make run', Y EN OTRA TERMINAL 'make watch' ###\n" 
