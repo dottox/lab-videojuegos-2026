@@ -1,5 +1,5 @@
 levels:
-- level_id: 1
+- level_id: 0
   boss_sprite: 1
   music_id: 1
   bpm: 120
@@ -30,3 +30,8 @@ levels:
   - { ts: 7500, pattern_id: 1, x: 40, y: 95 }
   - { ts: 9000, pattern_id: 0, x: 110, y: 75 }
   - { ts: 10500, pattern_id: 1, x: 60, y: 100 }
+- level_id: 1
+  boss_sprite: 1
+  music_id: 1
+  bpm: 120
+  duration_ms: 180000
