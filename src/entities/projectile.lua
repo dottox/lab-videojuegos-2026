@@ -2,6 +2,11 @@
 -- with this method (compressed projectile), we reduce Pico8 token usage
 function decode_projectiles(hex_string, patterns)
     local projectiles = {}
+
+    if #hex_string == 0 then
+        log("projs","no projectiles found","warn")
+        return projectiles
+    end
     
     -- 10 chars per projectile spawn (TS(4) + PATTERN_ID(2) + X(2) + Y(2))
     for i = 1, #hex_string, 10 do
@@ -50,7 +55,7 @@ function spawn_projectiles()
             })
             
             spawned_count += 1
-            printh("SPAWNED: ts="..proj.ts_ms.."ms x="..proj.x.." y="..proj.y.." type="..proj.type)
+            --log("SPAWNED: ts="..proj.ts_ms.."ms x="..proj.x.." y="..proj.y.." type="..proj.type)
             
             next_spawn_idx += 1
         else
@@ -82,6 +87,6 @@ function draw_projectiles()
         elseif p.type == 2 then col = 10
         end
         
-        circfill(p.x, p.y, 3, col)
+        circfill(p.x, p.y, 1, col)
     end
 end

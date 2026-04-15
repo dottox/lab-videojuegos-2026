@@ -3,6 +3,11 @@ function decode_patterns(hex_string)
     local pattern_count = tonum(sub(hex_string, 1, 2), 16)
     local pos = 3
     
+    if pattern_count == nil then 
+        log("pattern","no patterns found","warn")
+        return
+    end
+    
     for p = 1, pattern_count do
         if pos + 1 > #hex_string then break end
 

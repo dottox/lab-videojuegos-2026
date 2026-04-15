@@ -66,9 +66,16 @@ def build_lua():
     lua_output = "-- levels_data.lua\nLEVEL_DATA = {\n"
     
     for lvl in source['levels']:
-        patterns_hex = encode_patterns(lvl['patterns'])
-        projectiles_hex = encode_projectiles(lvl['projectiles'])
+        if 'patterns' in lvl:
+            patterns_hex = encode_patterns(lvl['patterns'])
+        else:
+            patterns_hex = ""
         
+        if 'projectiles'in lvl:
+            projectiles_hex = encode_projectiles(lvl['projectiles'])
+        else:
+            projectiles_hex = ""
+
         lua_output += f"  [{lvl['level_id']}] = {{\n"
         lua_output += f"    boss_sprite = {lvl['boss_sprite']},\n"
         lua_output += f"    music_id = {lvl['music_id']},\n"
