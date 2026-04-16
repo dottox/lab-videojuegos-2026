@@ -12,6 +12,7 @@ var dash_cooldown := 0.0
 var dash_cooldown_time := 0.25 #En segundos, ya que utilizamos delta
 
 func physics_update(player, delta):
+	
 	#Reducir cooldown por cada update/frame
 	update_cooldown(delta)
 	
@@ -24,6 +25,9 @@ func physics_update(player, delta):
 		return
 	
 	movement(player)
+	if player.playfield:
+		clam_to_playfield(player, player.playfield.get_bounds())
+
 
 func movement(player):
 	var direction = Input.get_vector("izquierda", "derecha", "arriba", "abajo")
@@ -52,4 +56,19 @@ func update_cooldown(delta):
 	#print(dash_cooldown)
 	if dash_cooldown > 0:
 		dash_cooldown -= delta
+	
+func clam_to_playfield(player, bounds: Rect2):
+	var half = player.get_half_size()
+	
+	player.global_position.x = clamp(
+		player.global_position.x,
+		bounds.position.x + half.x,
+		bounds.end.x - half.x
+	)
+
+	player.global_position.y = clamp(
+		player.global_position.y,
+		bounds.position.y + half.y,
+		bounds.end.y - half.y
+	)
 	

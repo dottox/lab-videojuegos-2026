@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cfquf2pyfdots"]
+
+[ext_resource type="Script" uid="uid://dvsckliqepou3" path="res://scenes/playfield/playfield.gd" id="1_phorc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t3er5"]
+
+[node name="playfield" type="Area2D" unique_id=1531265889]
+script = ExtResource("1_phorc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=502607842]
+position = Vector2(0, 0.100001335)
+shape = SubResource("RectangleShape2D_t3er5")
