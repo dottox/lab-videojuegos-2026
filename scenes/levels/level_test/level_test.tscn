@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dfhqd7bp7l0tw"]
+
+[ext_resource type="Script" uid="uid://dsnqrlwlf4hda" path="res://scenes/levels/level_test/level_test.gd" id="1_nb07k"]
+
+[node name="LevelTest" type="Node2D" unique_id=1596667529]
+script = ExtResource("1_nb07k")
+
+[node name="Entities" type="Node2D" parent="." unique_id=1291101025]
+position = Vector2(-1, -1)

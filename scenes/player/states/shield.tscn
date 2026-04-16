@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://omrw672ffdu3"]
+
+[ext_resource type="Texture2D" uid="uid://6u1prpuxjshf" path="res://assets/sprites/player/shield.png" id="1_tmbfg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2gmax"]
+size = Vector2(8, 8)
+
+[node name="shield" type="Area2D" unique_id=1434804339]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=701591796]
+shape = SubResource("RectangleShape2D_2gmax")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=780347800]
+texture_filter = 1
+scale = Vector2(3, 3)
+texture = ExtResource("1_tmbfg")
