@@ -4,6 +4,7 @@ extends Node2D
 
 var player_scene := preload("res://scenes/player/Player.tscn")
 var player
+
 var playfield_scene := preload("res://scenes/playfield/playfield.tscn")
 var playfield
 
