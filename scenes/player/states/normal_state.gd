@@ -5,7 +5,7 @@ var player_speed = 200
 
 #Variables relacionadas al dash
 var dash_speed := 5.0
-var dash_time := 0.1
+var dash_time := 0.1 #Tiempo en el que se va a estar dasheando
 var dash_timer := 0.0
 var is_dashing := false
 var dash_cooldown := 0.0
@@ -25,14 +25,19 @@ func physics_update(player, delta):
 		return
 	
 	movement(player)
+	
 	if player.playfield:
 		clam_to_playfield(player, player.playfield.get_bounds())
+		
+	player.queue_redraw()
 
 
 func movement(player):
 	var direction = Input.get_vector("izquierda", "derecha", "arriba", "abajo")
 
 	player.velocity = direction * player_speed
+	player.debug_dash_dir = player.velocity
+	player.debug_dash_length = dash_speed * dash_time
 	player.move_and_slide()
 	
 func can_dash() -> bool:
@@ -42,15 +47,19 @@ func start_dash(player):
 	is_dashing = true
 	dash_timer = dash_time
 	dash_cooldown = dash_cooldown_time
-	player.velocity *= dash_speed
 	
+	player.velocity *= dash_speed
+
 func update_dash(player, delta):
 	dash_timer -= delta
-	
+		
 	if dash_timer <= 0:
 		is_dashing = false
 		return
 	player.move_and_slide()
+	
+	if player.playfield:
+		clam_to_playfield(player, player.playfield.get_bounds())
 	
 func update_cooldown(delta):
 	#print(dash_cooldown)
@@ -71,4 +80,3 @@ func clam_to_playfield(player, bounds: Rect2):
 		bounds.position.y + half.y,
 		bounds.end.y - half.y
 	)
-	

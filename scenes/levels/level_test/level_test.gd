@@ -15,8 +15,8 @@ func _ready():
 func spawn_player():
 	player = player_scene.instantiate()
 	entities.add_child(player)
-	player.set_mode("normal")
-	player.global_position = get_viewport().get_visible_rect().size / 2.0
+	player.set_mode("shield")
+	player.global_position = playfield.global_position
 	player.playfield = playfield
 
 	
