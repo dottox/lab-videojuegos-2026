@@ -13,6 +13,8 @@ var bullet_scene := preload("res://scenes/projectiles/bullet/bullet.tscn")
 
 var music_timer
 
+var rythm_bar_scene := preload("res://scenes/ui/progress_bar/progress_bar.tscn")
+var rythm_bar 
 
 
 #Patron de clap + variables de los claps
@@ -50,6 +52,7 @@ func _ready():
 	spawn_playfield()
 	spawn_player()
 	init_music()
+	init_progress_bar()
 	
 func _physics_process(delta: float):
 	music_timer = music.get_playback_position()
@@ -119,8 +122,13 @@ func random_point_in_rect(rect: Rect2) -> Vector2:
 	
 func init_music():
 	#Inicio canción
-	#music.play(8)
+	#music.play(0)
 	#Primer drop
-	music.play(8)
+	music.play(0)
 	#Para debuguear, que vaya 'lento'
 	#music.pitch_scale = 0.5 
+	
+func init_progress_bar():
+	rythm_bar = rythm_bar_scene.instantiate()
+	entities.add_child(rythm_bar)
+	rythm_bar.set_bpm(500)

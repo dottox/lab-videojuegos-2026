@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b0qb83hmwonq"
+path="res://.godot/imported/GlitchCat, prodBigMike - whatdoyousee [NCS Release].mp3-7a0f90ef6a3e1563eada6ba8653d86a2.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/GlitchCat, prodBigMike - whatdoyousee [NCS Release].mp3"
+dest_files=["res://.godot/imported/GlitchCat, prodBigMike - whatdoyousee [NCS Release].mp3-7a0f90ef6a3e1563eada6ba8653d86a2.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
