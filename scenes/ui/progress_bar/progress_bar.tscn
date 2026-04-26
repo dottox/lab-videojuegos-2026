@@ -24,15 +24,27 @@ anchor_top = 0.043209877
 anchor_right = 0.96875
 anchor_bottom = 0.13117284
 grow_horizontal = 2
+color = Color(0, 0, 0, 1)
 metadata/_edit_use_anchors_ = true
 
 [node name="bar_beat" type="ColorRect" parent="Control/base_bar" unique_id=950006294]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 8.0
-offset_top = 9.0
-offset_right = -11.0
-offset_bottom = 48.0
+offset_left = 536.0
+offset_top = -18.0
+offset_right = -534.0
+offset_bottom = 80.0
 grow_horizontal = 2
 color = Color(1, 0, 1, 1)
+
+[node name="beat_effect" type="ColorRect" parent="Control/base_bar/bar_beat" unique_id=561968305]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.18181819
+anchor_top = 0.05
+anchor_right = 0.8181818
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
