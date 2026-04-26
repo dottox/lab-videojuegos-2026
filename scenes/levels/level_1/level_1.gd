@@ -12,6 +12,7 @@ var playfield
 var bullet_scene := preload("res://scenes/projectiles/bullet/bullet.tscn")
 
 var music_timer
+var bpm := 120
 
 var rythm_bar_scene := preload("res://scenes/ui/progress_bar/progress_bar.tscn")
 var rythm_bar 
@@ -57,6 +58,9 @@ func _ready():
 func _physics_process(delta: float):
 	music_timer = music.get_playback_position()
 	#print("Time: " + str(music_timer))
+
+	if music.playing:
+		rythm_bar.update_song_time(music_timer)
 	
 	if Input.is_action_just_pressed("hit_debug"):
 		print("¡Xilo!: " + str(music_timer))
@@ -131,4 +135,4 @@ func init_music():
 func init_progress_bar():
 	rythm_bar = rythm_bar_scene.instantiate()
 	entities.add_child(rythm_bar)
-	rythm_bar.set_bpm(500)
+	rythm_bar.set_bpm(bpm)
