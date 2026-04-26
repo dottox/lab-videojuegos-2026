@@ -2,7 +2,7 @@ extends Node2D
 
 @onready var entities: Node2D = $Entities
 
-var player_scene := preload("res://scenes/player/Player.tscn")
+var player_scene := preload("res://scenes/player/player.tscn")
 var player
 
 var playfield_scene := preload("res://scenes/playfield/playfield.tscn")
