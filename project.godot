@@ -15,6 +15,10 @@ run/main_scene="uid://bl0r451e3fkar"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GameLoader="*uid://baqawd7ky0hwg"
+
 [input]
 
 arriba={
