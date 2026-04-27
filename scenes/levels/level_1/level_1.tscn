@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bia6kjvqy44pw"]
 
-[ext_resource type="Script" uid="uid://bfw75whjp4fgg" path="res://scenes/levels/level_1/level_1.gd" id="1_x3ahk"]
+[ext_resource type="Script" uid="uid://caiom386vbuo6" path="res://scenes/levels/level_1/level_1.gd" id="1_x3ahk"]
 [ext_resource type="AudioStream" uid="uid://b0qb83hmwonq" path="res://assets/audio/GlitchCat, prodBigMike - whatdoyousee [NCS Release].mp3" id="2_fngju"]
 
-[node name="level_1" type="Node2D" unique_id=1949609879]
+[node name="level_1" type="Node2D" unique_id=5005]
 script = ExtResource("1_x3ahk")
 
 [node name="entities" type="Node2D" parent="." unique_id=1870565441]
