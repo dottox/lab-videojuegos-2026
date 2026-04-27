@@ -2,7 +2,7 @@ extends BaseLevel
 
 # Level 1 Specific Data
 func setup_level():
-	bpm = 120
+	bpm = 130
 	player.set_mode("normal") # Custom state for this level
 	playfield.set_state("normal")
 
