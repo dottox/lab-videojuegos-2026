@@ -77,6 +77,8 @@ func init_progress_bar():
 	rythm_bar.set_bpm(bpm)
 
 func init_music():
+	music.bus = "Analyzer"
+	AudioAnalyzer.register_music(music)
 	music.play(0)
 
 # Helper for all levels
@@ -107,15 +109,17 @@ func spawn_radial_bullets(center: Vector2, amount: int):
 func _physics_process(delta: float):
 	music_timer = music.get_playback_position()
 	#print("Time: " + str(music_timer))
-
+	#Debug - Audio Analyzer
+	#print("Bass: " + str(AudioAnalyzer.bass))
+	#print("Mid: " + str(AudioAnalyzer.mid))
+	#print("High: " + str(AudioAnalyzer.high))
+	
 	if music.playing:
 		rythm_bar.update_song_time(music_timer)
-	
+		
 	if Input.is_action_just_pressed("hit_debug"):
 		print("¡Xilo!: " + str(music_timer))
 		
 	next_clap_index = process_bullet(clap,next_clap_index,spawn_clap)
-
 	next_synth_index = process_bullet(synth,next_synth_index,spawn_synth)
-
 	next_xilo_index = process_bullet(xilo,next_xilo_index,spawn_xilo)

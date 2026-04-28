@@ -23,7 +23,7 @@ func _ready():
 	beat.pivot_offset = beat.size / 2
 
 func _process(delta):
-
+	
 	if pulse_timer > 0:
 		pulse_timer -= delta
 
