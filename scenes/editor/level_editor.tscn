@@ -1,0 +1,361 @@
+[gd_scene format=3 uid="uid://r1q74bef6vgq"]
+
+[ext_resource type="Script" uid="uid://fkfdnwd6scca" path="res://scenes/editor/level_editor.gd" id="1"]
+
+[node name="LevelEditor" type="Node2D" unique_id=435606519]
+script = ExtResource("1")
+
+[node name="PlayfieldLayer" type="Node2D" parent="." unique_id=1110660208]
+
+[node name="ZonesLayer" type="Node2D" parent="." unique_id=2145566489]
+
+[node name="ProjectilesLayer" type="Node2D" parent="." unique_id=1521947537]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1633797700]
+
+[node name="PreviewControls" type="CanvasLayer" parent="." unique_id=1433019775]
+layer = 2
+
+[node name="PreviewToggleButton" type="Button" parent="PreviewControls" unique_id=1927436534]
+offset_left = 1042.0
+offset_top = 596.0
+offset_right = 1139.0
+offset_bottom = 636.0
+text = "Preview"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=434072501]
+
+[node name="UI" type="Control" parent="CanvasLayer" unique_id=700382250]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Root" type="VBoxContainer" parent="CanvasLayer/UI" unique_id=45268037]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TopBar" type="HBoxContainer" parent="CanvasLayer/UI/Root" unique_id=591754051]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LoadMusicButton" type="Button" parent="CanvasLayer/UI/Root/TopBar" unique_id=131762273]
+layout_mode = 2
+text = "Load Music"
+
+[node name="MusicIdEdit" type="LineEdit" parent="CanvasLayer/UI/Root/TopBar" unique_id=326216523]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+placeholder_text = "music_id"
+
+[node name="BpmSpin" type="SpinBox" parent="CanvasLayer/UI/Root/TopBar" unique_id=693711497]
+layout_mode = 2
+min_value = 40.0
+max_value = 300.0
+value = 120.0
+
+[node name="PlayButton" type="Button" parent="CanvasLayer/UI/Root/TopBar" unique_id=1979646713]
+layout_mode = 2
+text = "Play"
+
+[node name="PauseButton" type="Button" parent="CanvasLayer/UI/Root/TopBar" unique_id=1661226562]
+layout_mode = 2
+text = "Pause"
+
+[node name="StepBackButton" type="Button" parent="CanvasLayer/UI/Root/TopBar" unique_id=1930056247]
+layout_mode = 2
+text = "-10ms"
+
+[node name="StepForwardButton" type="Button" parent="CanvasLayer/UI/Root/TopBar" unique_id=362351719]
+layout_mode = 2
+text = "+10ms"
+
+[node name="TimelineSlider" type="HSlider" parent="CanvasLayer/UI/Root/TopBar" unique_id=934730384]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1000.0
+
+[node name="TimeLabel" type="Label" parent="CanvasLayer/UI/Root/TopBar" unique_id=1393311211]
+layout_mode = 2
+text = "0:00.000"
+
+[node name="Content" type="HBoxContainer" parent="CanvasLayer/UI/Root" unique_id=1053995390]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PlayfieldPanel" type="PanelContainer" parent="CanvasLayer/UI/Root/Content" unique_id=4866635]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlayfieldVBox" type="VBoxContainer" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel" unique_id=823142597]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PlayfieldLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox" unique_id=2001411863]
+layout_mode = 2
+text = "Playfield"
+
+[node name="PlayfieldTypeOption" type="OptionButton" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox" unique_id=1725552018]
+layout_mode = 2
+
+[node name="PlayfieldGrid" type="GridContainer" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox" unique_id=416613156]
+layout_mode = 2
+columns = 2
+
+[node name="PlayfieldPosXLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=1398619718]
+layout_mode = 2
+text = "Pos X"
+
+[node name="PlayfieldPosXSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2027678826]
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
+
+[node name="PlayfieldPosYLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2020152387]
+layout_mode = 2
+text = "Pos Y"
+
+[node name="PlayfieldPosYSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=1620306901]
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
+
+[node name="PlayfieldWidthLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2090581680]
+layout_mode = 2
+text = "Width"
+
+[node name="PlayfieldWidthSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=169055156]
+layout_mode = 2
+min_value = 10.0
+max_value = 2000.0
+value = 500.0
+
+[node name="PlayfieldHeightLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=13620853]
+layout_mode = 2
+text = "Height"
+
+[node name="PlayfieldHeightSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=103750750]
+layout_mode = 2
+min_value = 10.0
+max_value = 2000.0
+value = 250.0
+
+[node name="ZonesPanel" type="PanelContainer" parent="CanvasLayer/UI/Root/Content" unique_id=632459669]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ZonesVBox" type="VBoxContainer" parent="CanvasLayer/UI/Root/Content/ZonesPanel" unique_id=1581308434]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ZonesLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox" unique_id=1375150439]
+layout_mode = 2
+text = "Zones"
+
+[node name="ZoneList" type="ItemList" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox" unique_id=295018102]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ZoneButtons" type="HBoxContainer" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox" unique_id=682850562]
+layout_mode = 2
+
+[node name="AddZoneButton" type="Button" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneButtons" unique_id=2083163519]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add"
+
+[node name="RemoveZoneButton" type="Button" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneButtons" unique_id=1057340764]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Remove"
+
+[node name="ZoneIdEdit" type="LineEdit" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox" unique_id=2079535028]
+layout_mode = 2
+placeholder_text = "zone_id"
+
+[node name="ZoneGrid" type="GridContainer" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox" unique_id=1380630387]
+layout_mode = 2
+columns = 2
+
+[node name="ZonePosXLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid" unique_id=425343418]
+layout_mode = 2
+text = "Pos X"
+
+[node name="ZonePosXSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid" unique_id=135907676]
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
+
+[node name="ZonePosYLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid" unique_id=426230465]
+layout_mode = 2
+text = "Pos Y"
+
+[node name="ZonePosYSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid" unique_id=2137133276]
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
+
+[node name="ZoneWidthLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid" unique_id=1987798377]
+layout_mode = 2
+text = "Width"
+
+[node name="ZoneWidthSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid" unique_id=549127387]
+layout_mode = 2
+min_value = 10.0
+max_value = 2000.0
+value = 150.0
+
+[node name="ZoneHeightLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid" unique_id=52330916]
+layout_mode = 2
+text = "Height"
+
+[node name="ZoneHeightSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid" unique_id=1329401075]
+layout_mode = 2
+min_value = 10.0
+max_value = 2000.0
+value = 100.0
+
+[node name="ProjectilesPanel" type="PanelContainer" parent="CanvasLayer/UI/Root/Content" unique_id=870317593]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ProjectilesVBox" type="VBoxContainer" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel" unique_id=216081620]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ProjectilesLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox" unique_id=1350559204]
+layout_mode = 2
+text = "Projectiles"
+
+[node name="ProjectileList" type="ItemList" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox" unique_id=1634946985]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ProjectileButtons" type="HBoxContainer" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox" unique_id=1246522017]
+layout_mode = 2
+alignment = 1
+
+[node name="AddProjectileButton" type="Button" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileButtons" unique_id=857084624]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add"
+
+[node name="DeleteProjectileButton" type="Button" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileButtons" unique_id=729858395]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Delete"
+
+[node name="ProjectileGrid" type="GridContainer" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox" unique_id=1672678908]
+layout_mode = 2
+columns = 2
+
+[node name="ProjectileTimeLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=77108764]
+layout_mode = 2
+text = "Time ms"
+
+[node name="ProjectileTimeSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=1664295798]
+layout_mode = 2
+max_value = 600000.0
+
+[node name="ProjectilePosXLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=204244897]
+layout_mode = 2
+text = "Pos X"
+
+[node name="ProjectilePosXSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=1026082449]
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
+
+[node name="ProjectilePosYLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=420571405]
+layout_mode = 2
+text = "Pos Y"
+
+[node name="ProjectilePosYSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=2029378140]
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
+
+[node name="ProjectileSpeedLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=1027264648]
+layout_mode = 2
+text = "Speed"
+
+[node name="ProjectileSpeedSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=453343261]
+layout_mode = 2
+max_value = 2000.0
+value = 200.0
+
+[node name="ProjectileAngleLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=1433552103]
+layout_mode = 2
+text = "Angle"
+
+[node name="ProjectileAngleSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=1176836141]
+layout_mode = 2
+min_value = -360.0
+max_value = 360.0
+
+[node name="ProjectileTypeLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=818451627]
+layout_mode = 2
+text = "Type"
+
+[node name="ProjectileTypeOption" type="OptionButton" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=1967621493]
+layout_mode = 2
+
+[node name="ProjectilePatternLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=654531425]
+layout_mode = 2
+text = "Pattern"
+
+[node name="ProjectilePatternOption" type="OptionButton" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=1789288659]
+layout_mode = 2
+
+[node name="ProjectileAreaLabel" type="Label" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=1089145709]
+layout_mode = 2
+text = "Area"
+
+[node name="ProjectileAreaOption" type="OptionButton" parent="CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid" unique_id=490960563]
+layout_mode = 2
+
+[node name="BottomBar" type="HBoxContainer" parent="CanvasLayer/UI/Root" unique_id=356178181]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExportButton" type="Button" parent="CanvasLayer/UI/Root/BottomBar" unique_id=1670946904]
+layout_mode = 2
+text = "Export YAML"
+
+[node name="ImportButton" type="Button" parent="CanvasLayer/UI/Root/BottomBar" unique_id=1457565296]
+layout_mode = 2
+text = "Import YAML"
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer/UI/Root/BottomBar" unique_id=1839088960]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Ready"
+
+[node name="MusicFileDialog" type="FileDialog" parent="CanvasLayer" unique_id=1405715111]
+oversampling_override = 1.0
+title = "Open a File"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.ogg ; OGG Audio", "*.wav ; WAV Audio", "*.mp3 ; MP3 Audio")
+
+[node name="ExportDialog" type="FileDialog" parent="CanvasLayer" unique_id=1963906588]
+access = 2
+filters = PackedStringArray("*.yml ; YAML", "*.yaml ; YAML")
+
+[node name="ImportDialog" type="FileDialog" parent="CanvasLayer" unique_id=1234896477]
+title = "Open a File"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.yml ; YAML", "*.yaml ; YAML")

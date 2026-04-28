@@ -19,12 +19,11 @@ func start_background_loading():
 		ResourceLoader.load_threaded_request(ca)
 		print("[game_loader]: Asset " + ca + " cargado.")
 		
-	print("[game_loadder]: Common assets cargados")
+	print("[game_loader]: Common assets cargados")
 	set_process(true)
 
 func _process(_delta):
 	var all_done = true
-	start_background_loading()
 	for key in common_assets:
 		var status = ResourceLoader.load_threaded_get_status(common_assets[key])
 		if status == ResourceLoader.THREAD_LOAD_LOADED:
