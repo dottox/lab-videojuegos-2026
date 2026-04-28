@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameLoader="*uid://baqawd7ky0hwg"
+AudioAnalyzer="*uid://c6mnx5fpylcgy"
 
 [input]
 
