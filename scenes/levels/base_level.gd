@@ -12,7 +12,7 @@ var bullet_scene
 
 # Logic variables (to be overridden by child levels)
 var music_timer: float = 0.0
-var bpm: int = 120
+var bpm: float = 120
 var next_synth_index: int = 0
 var next_clap_index: int = 0
 var next_xilo_index: int = 0
@@ -31,10 +31,10 @@ func _ready():
 	spawn_playfield()
 	spawn_player()
 	bullet_scene = GameLoader.get_asset("bullet")
-	init_progress_bar()
 	
 	# Call custom setup for specific levels
 	setup_level()
+	init_progress_bar()
 	init_music()
 
 func setup_level():

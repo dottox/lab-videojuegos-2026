@@ -23,8 +23,9 @@ func _ready():
 	beat.pivot_offset = beat.size / 2
 
 func _process(delta):
-
+	
 	if pulse_timer > 0:
+		print((60 / seconds_per_beat))
 		pulse_timer -= delta
 
 		var t = pulse_timer / pulse_time
