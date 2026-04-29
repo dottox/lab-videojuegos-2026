@@ -25,7 +25,9 @@ var bullet_clap_speed: int = 200
 var bullets_per_clap: int = 16
 var bullet_size: int = 5
 
+
 func _ready():
+	GameLoader.start_background_loading()
 	await GameLoader.loading_finished
 	# Use assets already loaded in background by GameLoader (Singleton)
 	spawn_playfield()

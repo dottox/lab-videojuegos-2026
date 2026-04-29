@@ -33,3 +33,7 @@ proyecto/
 ├── Makefile              # Automatización de build y watch
 └── .gitignore            # Archivos ignorados (ej: .venv)
 ```
+
+## Level Editor
+
+Abre `scenes/editor/level_editor.tscn` en Godot y ejecútalo como escena. Desde ahí puedes cargar música, definir el playfield, crear zonas y proyectiles, y exportar/importar niveles en YAML. El YAML está pensado para este esquema simple (sin estructuras complejas, ni arrays con strings que contengan comas, ni strings multilínea).

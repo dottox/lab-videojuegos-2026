@@ -25,7 +25,6 @@ func _ready():
 func _process(delta):
 	
 	if pulse_timer > 0:
-		print((60 / seconds_per_beat))
 		pulse_timer -= delta
 
 		var t = pulse_timer / pulse_time
@@ -34,7 +33,6 @@ func _process(delta):
 		beat.scale = base_scale
 
 func set_bpm(bpm: float):
-	print(bpm)
 	seconds_per_beat = 60 / bpm
 	
 func update_song_time(time: float):
