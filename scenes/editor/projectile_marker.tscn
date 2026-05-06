@@ -1,9 +1,8 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://divjc4km05hba"]
 
-[ext_resource type="Script" path="res://scenes/editor/projectile_marker.gd" id="1"]
+[ext_resource type="Script" uid="uid://cy4q2rt06yns6" path="res://scenes/editor/projectile_marker.gd" id="1"]
 
-[node name="ProjectileMarker" type="Area2D"]
+[node name="ProjectileMarker" type="Area2D" unique_id=1636893067]
 script = ExtResource("1")
-input_pickable = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=813361217]

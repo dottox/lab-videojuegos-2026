@@ -1,4 +1,5 @@
 extends Node2D
+# level_editor.gd
 
 const ProjectileMarkerScene := preload("res://scenes/editor/projectile_marker.tscn")
 const ZoneAreaScene := preload("res://scenes/editor/zone_area.tscn")

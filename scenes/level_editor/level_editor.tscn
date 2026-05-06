@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://r1q74bef6vgq"]
 
-[ext_resource type="Script" uid="uid://fkfdnwd6scca" path="res://scenes/editor/level_editor.gd" id="1"]
+[ext_resource type="Script" uid="uid://fkfdnwd6scca" path="res://scenes/level_editor/level_editor.gd" id="1"]
 
 [node name="LevelEditor" type="Node2D" unique_id=435606519]
 script = ExtResource("1")
@@ -332,11 +332,11 @@ size_flags_horizontal = 3
 
 [node name="ExportButton" type="Button" parent="CanvasLayer/UI/Root/BottomBar" unique_id=1670946904]
 layout_mode = 2
-text = "Export YAML"
+text = "Export Level"
 
 [node name="ImportButton" type="Button" parent="CanvasLayer/UI/Root/BottomBar" unique_id=1457565296]
 layout_mode = 2
-text = "Import YAML"
+text = "Import Level"
 
 [node name="StatusLabel" type="Label" parent="CanvasLayer/UI/Root/BottomBar" unique_id=1839088960]
 layout_mode = 2
@@ -352,10 +352,10 @@ filters = PackedStringArray("*.ogg ; OGG Audio", "*.wav ; WAV Audio", "*.mp3 ; M
 
 [node name="ExportDialog" type="FileDialog" parent="CanvasLayer" unique_id=1963906588]
 access = 2
-filters = PackedStringArray("*.yml ; YAML", "*.yaml ; YAML")
+filters = PackedStringArray("*.cfg ; Level files")
 
 [node name="ImportDialog" type="FileDialog" parent="CanvasLayer" unique_id=1234896477]
 title = "Open a File"
 file_mode = 0
 access = 2
-filters = PackedStringArray("*.yml ; YAML", "*.yaml ; YAML")
+filters = PackedStringArray("*.cfg ; Level files")
