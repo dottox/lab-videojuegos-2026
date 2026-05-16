@@ -8,7 +8,7 @@ var NormalState = preload("res://scenes/playfield/states/normal_state.gd")
 @onready var shape: CollisionShape2D = $CollisionShape2D
 
 func _ready():
-	pass
+	set_state("normal")
 
 func _draw():
 	var rect = shape.shape.get_rect()

@@ -5,9 +5,12 @@ const LevelEditorZones = preload("res://scenes/level_editor/level_editor_zones.g
 const LevelEditorProjectiles = preload("res://scenes/level_editor/level_editor_projectiles.gd")
 const LevelEditorIO = preload("res://scenes/level_editor/level_editor_io.gd")
 
-const ProjectileMarkerScene := preload("res://scenes/editor/projectile_marker.tscn")
-const ZoneAreaScene := preload("res://scenes/editor/zone_area.tscn")
+const LevelLoader = preload("res://scenes/levels/level_loader.gd")
+
+const ProjectileMarkerScene := preload("res://scenes/level_editor/projectile_marker.tscn")
+const ZoneAreaScene := preload("res://scenes/level_editor/zone_area.tscn")
 const PlayfieldScene := preload("res://scenes/playfield/playfield.tscn")
+const LivePreviewScene := preload("res://scenes/levels/level_loader.tscn")
 
 const PROJECTILE_ENUM_PATHS: Array[String] = [
 	"res://scenes/projectiles/bullet/bullet.gd"
@@ -16,9 +19,7 @@ const PLAYFIELD_ENUM_PATHS: Array[String] = [
 	"res://scenes/playfield/playfield.gd"
 ]
 
-const PROJECTILE_TYPE_ENUM_NAMES: Array[String] = ["ProjectileType", "ProjectileTypes", "Type"]
-const PROJECTILE_PATTERN_ENUM_NAMES: Array[String] = ["ProjectilePattern", "ProjectilePatterns", "Pattern"]
-const PLAYFIELD_TYPE_ENUM_NAMES: Array[String] = ["PlayfieldType", "PlayfieldTypes", "Type"]
+const PROJECTILE_PATTERN_ENUM_PATH: String = "res://scenes/projectiles/bullet/bullet_patterns.gd"
 const PROJECTILE_PREVIEW_WINDOW_MS := 2000
 const ZONE_DEFAULT_MARGIN := 20.0
 const ZONES_PER_ROW := 2
@@ -27,12 +28,18 @@ const Z_INDEX_ZONES := -10
 const Z_INDEX_PLAYFIELD := 0
 const Z_INDEX_PROJECTILES := 10
 
+const PREVIEW_EXPORT_PATH := "res://level_preview.cfg"
+
 @onready var playfield_layer: Node2D = $PlayfieldLayer
 @onready var zones_layer: Node2D = $ZonesLayer
 @onready var projectiles_layer: Node2D = $ProjectilesLayer
+@onready var live_preview_layer: Node2D = $LivePreviewLayer
 @onready var music_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
 @onready var preview_toggle_button: Button = $PreviewControls/PreviewToggleButton
+@onready var live_preview_button: Button = $PreviewControls/LivePreviewButton
 @onready var ui_root: Control = $CanvasLayer/UI/Root
+@onready var ui_content: Control = $CanvasLayer/UI/Root/Content
+@onready var ui_bottom_bar: Control = $CanvasLayer/UI/Root/BottomBar
 
 @onready var load_music_button: Button = $CanvasLayer/UI/Root/TopBar/LoadMusicButton
 @onready var music_id_edit: LineEdit = $CanvasLayer/UI/Root/TopBar/MusicIdEdit
@@ -81,10 +88,12 @@ const Z_INDEX_PROJECTILES := 10
 
 var playfield
 var state := LevelEditorState.new()
+var live_preview
 
 var zones_component: LevelEditorZones
 var projectiles_component: LevelEditorProjectiles
 var io_component: LevelEditorIO
+var level_loader_component: LevelLoader
 
 # Inicializa los componentes y prepara el editor.
 func _ready() -> void:
@@ -131,6 +140,7 @@ func _input(event: InputEvent) -> void:
 		if event.pressed:
 			if event.keycode == KEY_SHIFT:
 				state.dragging_projectile = true
+				_select_projectile_close_to_mouse()
 				_move_selected_projectile_to_mouse()
 			if event.keycode == KEY_CTRL and not state.dragging_projectile:
 				print("InputEvent: Creating projectile...")
@@ -140,7 +150,30 @@ func _input(event: InputEvent) -> void:
 	
 	if event is InputEventMouseMotion and state.dragging_projectile:
 		_move_selected_projectile_to_mouse()
-		
+
+func _select_projectile_close_to_mouse(max_radius: float = 64.0) -> void:
+	if state.projectiles.is_empty():
+		return
+
+	var mouse_pos := get_global_mouse_position()
+	var closest_index := -1
+	var closest_dist := max_radius
+
+	for i in range(state.projectiles.size()):
+		var proj = state.projectiles[i]
+		var node = proj.get("node")
+		if node == null or not node.visible:
+			continue
+
+		var proj_pos: Variant = proj.get("pos", node.global_position)
+		var dist := mouse_pos.distance_to(proj_pos)
+		if dist <= closest_dist:
+			closest_dist = dist
+			closest_index = i
+
+	if closest_index != -1:
+		projectiles_component.select_projectile(closest_index)
+
 func _move_selected_projectile_to_mouse() -> void:
 	if state.selected_projectile_index < 0 or state.selected_projectile_index >= state.projectiles.size():
 		return
@@ -168,35 +201,35 @@ func _init_playfield() -> void:
 	playfield.global_position = viewport_center + Vector2(0, 100)
 	playfield_pos_x_spin.value = playfield.global_position.x
 	playfield_pos_y_spin.value = playfield.global_position.y
-	if playfield.has_method("set_state"):
-		playfield.set_state(state.playfield_type)
-	if playfield.has_method("set_size"):
-		playfield.set_size(Vector2(playfield_width_spin.value, playfield_height_spin.value))
+	playfield.set_state(state.playfield_type)
+	playfield.set_size(Vector2(playfield_width_spin.value, playfield_height_spin.value))
 	playfield.visible = false
+
 
 # Carga enums desde scripts para poblar los OptionButton.
 func _load_enums() -> void:
-	state.projectile_types = _load_enum_values(PROJECTILE_ENUM_PATHS, PROJECTILE_TYPE_ENUM_NAMES)
+	#state.projectile_types = _load_enum_values(PROJECTILE_ENUM_PATHS, PROJECTILE_TYPE_ENUM_NAMES)
 	if state.projectile_types.is_empty():
 		state.projectile_types = ["basic"]
-	state.projectile_patterns = _load_enum_values(PROJECTILE_ENUM_PATHS, PROJECTILE_PATTERN_ENUM_NAMES)
-	state.playfield_types = _load_enum_values(PLAYFIELD_ENUM_PATHS, PLAYFIELD_TYPE_ENUM_NAMES)
+	state.projectile_patterns = _load_enum_values(PROJECTILE_PATTERN_ENUM_PATH, "PATTERNS")
+	#state.playfield_types = _load_enum_values(PLAYFIELD_ENUM_PATHS, PLAYFIELD_TYPE_ENUM_NAMES)
 	if state.playfield_types.is_empty():
 		state.playfield_types = ["normal"]
 	state.playfield_type = state.playfield_types[0]
 
 # Intenta leer un enum desde un script y devolver sus claves ordenadas.
-func _load_enum_values(paths: Array[String], enum_type_names: Array[String]) -> Array[String]:
-	for path in paths:
-		if ResourceLoader.exists(path):
-			var script_resource = load(path)
-			if script_resource and script_resource is Script:
-				var constants = script_resource.get_script_constant_map()
-				for enum_name in enum_type_names:
-					if constants.has(enum_name) and constants[enum_name] is Dictionary:
-						var values = constants[enum_name].keys()
-						values.sort()
-						return values
+func _load_enum_values(path: String, enum_type_name: String) -> Array:
+	if ResourceLoader.exists(path):
+		var script_resource = load(path)
+		if script_resource and script_resource is Script:
+			var constants = script_resource.get_script_constant_map()
+			if constants.has(enum_type_name) and constants[enum_type_name] is Dictionary:
+				var values: Array[String] = []
+				for key in constants[enum_type_name].keys():
+					values.append(str(key))
+				values.sort()
+				return values
+	print(["[level_editor] ", enum_type_name, " not loaded for any reason..."])
 	return []
 
 # Rellena los dropdowns con los valores cargados.
@@ -260,6 +293,7 @@ func _setup_ui() -> void:
 
 	export_button.pressed.connect(_on_export_pressed)
 	import_button.pressed.connect(_on_import_pressed)
+	live_preview_button.pressed.connect(_on_live_preview_pressed)
 
 	music_file_dialog.file_selected.connect(_on_music_file_selected)
 	export_dialog.file_selected.connect(io_component._on_export_file_selected)
@@ -367,11 +401,52 @@ func _on_export_pressed() -> void:
 # Abre el diálogo de importación.
 func _on_import_pressed() -> void:
 	import_dialog.popup_centered_ratio(0.6)
+	
+# Exporta el estado actual a un archivo temporal y recarga el LevelLoader.
+func _on_live_preview_pressed() -> void:
+	if io_component == null:
+		return
+
+	# If live preview is already running, stop it and restore the editor UI.
+	if state.live_preview:
+		state.live_preview = false
+
+		if is_instance_valid(level_loader_component):
+			level_loader_component.queue_free()
+			level_loader_component = null
+
+		if is_instance_valid(live_preview):
+			live_preview.queue_free()
+			live_preview = null
+
+		ui_root.visible = true
+		preview_toggle_button.visible = true
+		projectiles_layer.visible = true
+		playfield_layer.visible = true
+		
+		return
+		
+	# Start live preview.
+	io_component.export_preview_to_path(PREVIEW_EXPORT_PATH)
+	
+	ui_root.visible = false
+	preview_toggle_button.visible = false
+	projectiles_layer.visible = false
+	playfield_layer.visible = false
+
+	level_loader_component = LivePreviewScene.instantiate()
+	level_loader_component.start_time_ms = state.current_time_ms
+	live_preview_layer.add_child(level_loader_component)
+	level_loader_component.load_level_config(PREVIEW_EXPORT_PATH, true)
+	
+	_update_status("Preview exported")
+	state.live_preview = true
 
 # Alterna entre modo edición y modo preview.
 func _on_preview_toggle_pressed() -> void:
 	state.preview_mode = not state.preview_mode
-	ui_root.visible = not state.preview_mode
+	ui_content.visible = not state.preview_mode
+	ui_bottom_bar.visible = not state.preview_mode
 	playfield.visible = state.preview_mode
 	preview_toggle_button.text = "Editor" if state.preview_mode else "Preview"
 

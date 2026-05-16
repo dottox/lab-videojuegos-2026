@@ -20,4 +20,5 @@ var playfield_type := "normal"
 var suppress_ui := false
 var is_playing := false
 var preview_mode := false
+var live_preview = false
 var dragging_projectile := false

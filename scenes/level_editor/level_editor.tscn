@@ -11,17 +11,26 @@ script = ExtResource("1")
 
 [node name="ProjectilesLayer" type="Node2D" parent="." unique_id=1521947537]
 
+[node name="LivePreviewLayer" type="Node2D" parent="." unique_id=1539757294]
+
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1633797700]
 
 [node name="PreviewControls" type="CanvasLayer" parent="." unique_id=1433019775]
 layer = 2
 
 [node name="PreviewToggleButton" type="Button" parent="PreviewControls" unique_id=1927436534]
-offset_left = 1042.0
+offset_left = 927.0
+offset_top = 596.0
+offset_right = 1022.0
+offset_bottom = 637.0
+text = "Preview"
+
+[node name="LivePreviewButton" type="Button" parent="PreviewControls" unique_id=149183769]
+offset_left = 1030.0
 offset_top = 596.0
 offset_right = 1139.0
-offset_bottom = 636.0
-text = "Preview"
+offset_bottom = 637.0
+text = "LivePreview"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=434072501]
 

@@ -29,12 +29,23 @@ func _on_import_file_selected(path: String) -> void:
 	_read_level_config(config)
 	editor._update_status("Imported: %s" % path.get_file())
 
+# Exports the current level state to a temp preview file.
+func export_preview_to_path(path: String) -> void:
+	var config := ConfigFile.new()
+	_write_level_config(config)
+	var err := config.save(path)
+	if err != OK:
+		editor._update_status("Failed to export preview")
+	else:
+		editor._update_status("Preview exported: %s" % path.get_file())
+
 # Serializes the current editor state into a ConfigFile.
 func _write_level_config(config: ConfigFile) -> void:
 	# Meta: keep this section small and readable.
 	config.set_value("meta", "music_id", editor.state.music_id)
 	config.set_value("meta", "music_path", _make_relative_if_possible(editor.state.music_path))
 	config.set_value("meta", "bpm", editor.bpm_spin.value)
+	config.set_value("meta", "start_time_ms", editor.state.current_time_ms)
 
 	# Playfield first because it's the spatial base for zones/projectiles.
 	config.set_value("playfield", "type", editor.state.playfield_type)
@@ -192,7 +203,6 @@ func _make_relative_if_possible(path: String) -> String:
 		return path
 	if path.begins_with("user://"):
 		return path
-	# Si es una ruta absoluta, intentamos convertirla a res:// cuando sea posible.
 	if path.contains("/"):
 		var project_dir := ProjectSettings.globalize_path("res://")
 		if path.begins_with(project_dir):
@@ -203,5 +213,4 @@ func _make_relative_if_possible(path: String) -> String:
 func _resolve_path(path: String) -> String:
 	if path.begins_with("res://") or path.begins_with("user://"):
 		return path
-	# Si el archivo importado trae una ruta absoluta, se conserva tal cual.
 	return path

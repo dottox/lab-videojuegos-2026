@@ -18,7 +18,7 @@ func _on_add_zone_pressed() -> void:
 	zone_node.set_zone(zone_id, rect)
 	zone_node.clicked.connect(editor._on_zone_clicked)
 	editor.state.zones.append({"id": zone_id, "rect": rect, "node": zone_node})
-	_refresh_zone_list()
+	refresh_zone_list()
 	editor._update_area_options()
 	_select_zone(editor.state.zones.size() - 1)
 
@@ -33,7 +33,7 @@ func _on_remove_zone_pressed() -> void:
 		node.queue_free()
 	editor.state.zones.remove_at(editor.state.selected_zone_index)
 	editor.state.selected_zone_index = -1
-	_refresh_zone_list()
+	refresh_zone_list()
 	editor._update_area_options()
 	_clear_zone_inspector()
 	_clear_projectile_area_for_zone(zone_id)
@@ -93,7 +93,7 @@ func _on_zone_id_changed(text: String) -> void:
 	var node = zone_data.get("node")
 	if node:
 		node.set_zone(text, zone_data.get("rect", Rect2()))
-	_refresh_zone_list()
+	refresh_zone_list()
 	editor._update_area_options()
 	_update_projectile_area_ids(old_id, text)
 
@@ -128,7 +128,7 @@ func _on_zone_size_changed(_value: float) -> void:
 		node.set_zone(zone_data.get("id", ""), rect)
 
 # Rebuilds the zone list UI while preserving the current selection when possible.
-func _refresh_zone_list() -> void:
+func refresh_zone_list() -> void:
 	var previous = editor.state.selected_zone_index
 	editor.zone_list.clear()
 	for zone_data in editor.state.zones:
@@ -171,7 +171,7 @@ func clear_zones() -> void:
 	editor.state.zones.clear()
 	editor.state.selected_zone_index = -1
 	editor.state.zone_id_counter = 1
-	_refresh_zone_list()
+	refresh_zone_list()
 
 # Recomputes the next zone ID counter from existing zone IDs.
 func recalculate_zone_id_counter() -> void:
