@@ -11,6 +11,7 @@ func _ready():
 	set_state("normal")
 
 func _draw():
+	print(shape.shape)
 	var rect = shape.shape.get_rect()
 	var outer_rect = Rect2(
 		rect.position - Vector2(10, 10),
@@ -36,6 +37,8 @@ func set_state(state: String):
 			change_state(NormalState.new())
 	
 func set_size(size: Vector2):
+	if shape.shape:
+		shape.shape = shape.shape.duplicate()
 	shape.shape.size = size
 	queue_redraw()
 

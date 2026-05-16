@@ -437,7 +437,7 @@ func _on_live_preview_pressed() -> void:
 	level_loader_component = LivePreviewScene.instantiate()
 	level_loader_component.start_time_ms = state.current_time_ms
 	live_preview_layer.add_child(level_loader_component)
-	level_loader_component.load_level_config(PREVIEW_EXPORT_PATH, true)
+	level_loader_component.load_level(PREVIEW_EXPORT_PATH)
 	
 	_update_status("Preview exported")
 	state.live_preview = true

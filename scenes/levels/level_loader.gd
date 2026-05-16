@@ -31,7 +31,7 @@ var level_config: Dictionary = {}
 var bullet_pool: Array[Bullet] = []
 var bullet_pool_size: int = 100
 
-func _ready() -> void:
+func load_level(level_path: String) -> void:
 	GameLoader.start_background_loading()
 	await GameLoader.loading_finished
 
@@ -44,7 +44,7 @@ func _ready() -> void:
 	spawn_player()
 
 	init_bullet_pool()
-	load_level_config("test2", false)
+	load_level_config(level_path)
 	apply_level_config()
 	_skip_projectiles_before_start_time()
 
@@ -97,21 +97,16 @@ func spawn_bullet(pos: Vector2, velocity: Vector2, size: float, color: Variant =
 	bullet.activate(pos, velocity, size, color)
 
 
-func load_level_config(level_name: String, live_preview: bool) -> void:
+func load_level_config(level_path: String) -> void:
 	level_config = {}
 	projectile_configs.clear()
 	next_projectile_index = 0
 
-	var level_path := "res://levels/%s.cfg" % level_name
-	if live_preview:
-		print("[level_loader] ", "loading live_preview export config: ", level_name)
-		level_path = level_name
 	if not FileAccess.file_exists(level_path):
 		push_warning("Level config not found: %s" % level_path)
 		return
 
 	parse_level_cfg(level_path)
-
 
 func parse_level_cfg(path: String) -> void:
 	var cfg := ConfigFile.new()
@@ -142,15 +137,12 @@ func apply_level_config() -> void:
 	music_timer = start_time_ms / 1000.0
 
 	var playfield_cfg: Dictionary = level_config.get("playfield", {})
-	if playfield_cfg.has("position"):
-		var p = playfield_cfg["position"]
-		playfield.global_position = Vector2(float(p[0]), float(p[1]))
-	if playfield_cfg.has("size") and playfield.has_method("set_size"):
-		var s = playfield_cfg["size"]
-		playfield.set_size(Vector2(float(s[0]), float(s[1])))
-	if playfield_cfg.has("type") and playfield.has_method("set_state"):
-		playfield.set_state(str(playfield_cfg["type"]))
-
+	playfield.set_state(str(playfield_cfg["type"]))
+	var p = playfield_cfg["position"]
+	playfield.global_position = Vector2(float(p[0]), float(p[1]))
+	var s = playfield_cfg["size"]
+	playfield.set_size(Vector2(float(s[0]), float(s[1])))
+		
 func _skip_projectiles_before_start_time() -> void:
 	while next_projectile_index < projectile_configs.size():
 		var projectile := projectile_configs[next_projectile_index]
@@ -183,7 +175,6 @@ func init_music() -> void:
 	music_timer = start_time_ms / 1000.0
 
 func process_projectiles() -> void:
-	print("timer=", music_timer, " next=", next_projectile_index, " count=", projectile_configs.size())
 	while next_projectile_index < projectile_configs.size():
 		var projectile := projectile_configs[next_projectile_index]
 		var spawn_time := float(projectile.get("time_ms", 0)) / 1000.0
