@@ -31,6 +31,12 @@ var level_config: Dictionary = {}
 var bullet_pool: Array[Bullet] = []
 var bullet_pool_size: int = 100
 
+var level_path: String
+
+func _ready() -> void:
+	if level_path:
+		load_level(level_path)
+
 func load_level(level_path: String) -> void:
 	GameLoader.start_background_loading()
 	await GameLoader.loading_finished

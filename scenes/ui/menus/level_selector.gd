@@ -3,7 +3,7 @@ extends Control
 @onready var level_list = $ScrollContainer/VBoxContainer
 @onready var regresar: Button = $ScrollContainer/VBoxContainer/Regresar
 
-const LEVELS_PATH = "res://scenes/levels/"
+const LEVELS_PATH = "res://levels/"
 
 func _ready():
 	generate_level_buttons()
@@ -18,32 +18,26 @@ func generate_level_buttons():
 
 	dir.list_dir_begin()
 
-	var folder_name = dir.get_next()
-
-	while folder_name != "":
-		if dir.current_is_dir() and not folder_name.begins_with("."):
-			create_level_button(folder_name)
-
-		folder_name = dir.get_next()
+	var level_name = dir.get_next()
+	while level_name != "":
+		create_level_button(level_name)
+		level_name = dir.get_next()
 
 	dir.list_dir_end()
 	
-func create_level_button(level_dir):
+func create_level_button(level_name):
 	var button = Button.new()
 
-	button.text = level_dir.capitalize()
-
-	var level_scene_path = LEVELS_PATH + level_dir + "/" + level_dir + ".tscn"
+	button.text = level_name.capitalize().left(-4)
+	
+	var level_path = LEVELS_PATH + level_name
 
 	button.pressed.connect(
 		func():
-			on_level_selected(level_dir)
+			GameLoader.load_level(level_path)
 	)
 
 	level_list.add_child(button)
-
-func on_level_selected(path):
-	GameLoader.load_scene(path)
 
 func _on_back_pressed():
 	GameLoader.load_scene("main_menu")
