@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://doov1hffmknuo" path="res://icon.svg" id="1_8afob"]
 [ext_resource type="Script" uid="uid://boyogf1pmxmdo" path="res://scenes/player/player.gd" id="1_dovo2"]
+[ext_resource type="Script" uid="uid://dc50cfcryk6xp" path="res://scenes/player/debug_layer.gd" id="3_gmlin"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dovo2"]
 size = Vector2(24, 24)
@@ -15,3 +16,6 @@ shape = SubResource("RectangleShape2D_dovo2")
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=724449612]
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("1_8afob")
+
+[node name="DebugLayer" type="Node2D" parent="." unique_id=1739503085]
+script = ExtResource("3_gmlin")
