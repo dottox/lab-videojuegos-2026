@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://bas7kye5q42ee"]
+
+[ext_resource type="Script" uid="uid://d76taju6g8gf" path="res://scenes/ui/menus/main_menu.gd" id="1_flhq8"]
+
+[node name="MainMenu" type="Control" unique_id=1977606650]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_flhq8")
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=514897235]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=975493103]
+layout_mode = 2
+
+[node name="Jugar" type="Button" parent="CenterContainer/VBoxContainer" unique_id=922696214]
+layout_mode = 2
+text = "Jugar"
+
+[node name="Editor" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1768348047]
+layout_mode = 2
+text = "Editor
+"
+
+[node name="Opciones" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1823475081]
+layout_mode = 2
+text = "Opciones"
+
+[node name="Creditos" type="Button" parent="CenterContainer/VBoxContainer" unique_id=458563569]
+layout_mode = 2
+text = "Creditos"
+
+[node name="Salir" type="Button" parent="CenterContainer/VBoxContainer" unique_id=2007650609]
+layout_mode = 2
+text = "Salir"
