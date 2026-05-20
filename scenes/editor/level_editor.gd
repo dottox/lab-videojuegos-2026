@@ -31,6 +31,8 @@ const Z_INDEX_PROJECTILES := 10
 @onready var music_player: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 @onready var preview_toggle_button: Button = $PreviewControls/PreviewToggleButton
+@onready var regresar: Button = $PreviewControls/Regresar
+
 
 # --- TODA LA UI SOBRE ROOT ---
 @onready var ui_root: Control = $CanvasLayer/UI/Root
@@ -203,6 +205,8 @@ func _setup_option_buttons() -> void:
 	for option in projectile_patterns:
 		projectile_pattern_option.add_item(option)
 	projectile_pattern_option.select(0)
+	
+	regresar.pressed.connect(_on_regresar_pressed)
 
 	_update_area_options()
 
@@ -1111,3 +1115,6 @@ func _array_to_rect2(value: Variant, fallback: Rect2) -> Rect2:
 	if value is Array and value.size() >= 4:
 		return Rect2(float(value[0]), float(value[1]), float(value[2]), float(value[3]))
 	return fallback
+
+func _on_regresar_pressed():
+	GameLoader.load_scene("main_menu")

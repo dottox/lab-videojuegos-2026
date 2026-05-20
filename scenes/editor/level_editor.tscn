@@ -17,11 +17,18 @@ script = ExtResource("1")
 layer = 2
 
 [node name="PreviewToggleButton" type="Button" parent="PreviewControls" unique_id=1927436534]
-offset_left = 1042.0
-offset_top = 596.0
-offset_right = 1139.0
-offset_bottom = 636.0
+offset_left = 1063.0
+offset_top = 565.0
+offset_right = 1147.0
+offset_bottom = 598.0
 text = "Preview"
+
+[node name="Regresar" type="Button" parent="PreviewControls" unique_id=648097469]
+offset_left = 1064.0
+offset_top = 600.0
+offset_right = 1147.0
+offset_bottom = 634.0
+text = "Regresar"
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=434072501]
 

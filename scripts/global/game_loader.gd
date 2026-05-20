@@ -6,7 +6,14 @@ var common_assets = {
 	"player": "res://scenes/player/player.tscn",
 	"playfield": "res://scenes/playfield/playfield.tscn",
 	"bullet": "res://scenes/projectiles/bullet/bullet.tscn",
-	"rythm_bar": "res://scenes/ui/progress_bar/progress_bar.tscn"
+	"rythm_bar": "res://scenes/ui/progress_bar/progress_bar.tscn",
+	"main_menu": "res://scenes/ui/menus/main_menu.tscn",
+	"level_selector": "res://scenes/ui/menus/level_selector.tscn",
+	"level_editor": "res://scenes/editor/level_editor.tscn",
+	"opciones": "",
+	"creditos": "",
+	"level_1": "res://scenes/levels/level_1/level_1.tscn",
+	"level_test": "res://scenes/levels/level_test/level_test.tscn",
 }
 
 var loaded_resources = {}
@@ -42,3 +49,13 @@ func get_asset(key: String) -> PackedScene:
 		print("[game_loader] asking for a non-existant key: ", key)
 	return loaded_resources.get(key)
 	
+func load_scene(key: String):
+	var scene: PackedScene = get_asset(key)
+	
+	if scene == null:
+		push_error("[GameLoader] Escena no encontrada: " + key)
+		return
+	
+	print("[GameLoader] Cambiando a:", key)
+
+	get_tree().change_scene_to_packed(scene)
