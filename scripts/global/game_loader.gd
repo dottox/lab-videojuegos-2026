@@ -47,7 +47,7 @@ func get_asset(key: String) -> PackedScene:
 	var res = loaded_resources.get(key)
 	if res == null:
 		print("[game_loader] asking for a non-existant key: ", key)
-	return loaded_resources.get(key)
+	return res
 	
 func load_scene(key: String):
 	var scene: PackedScene = get_asset(key)
