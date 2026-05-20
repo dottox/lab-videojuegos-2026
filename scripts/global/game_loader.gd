@@ -9,11 +9,10 @@ var common_assets = {
 	"rythm_bar": "res://scenes/ui/progress_bar/progress_bar.tscn",
 	"main_menu": "res://scenes/ui/menus/main_menu.tscn",
 	"level_selector": "res://scenes/ui/menus/level_selector.tscn",
-	"level_editor": "res://scenes/editor/level_editor.tscn",
+	"level_editor": "res://scenes/level_editor/level_editor.tscn",
+	"level_loader": "res://scenes/levels/level_loader.tscn",
 	"opciones": "",
 	"creditos": "",
-	"level_1": "res://scenes/levels/level_1/level_1.tscn",
-	"level_test": "res://scenes/levels/level_test/level_test.tscn",
 }
 
 var loaded_resources = {}
@@ -59,3 +58,20 @@ func load_scene(key: String):
 	print("[GameLoader] Cambiando a:", key)
 
 	get_tree().change_scene_to_packed(scene)
+	
+func load_level(level_name: String):
+	var level_loader_scene: PackedScene = get_asset("level_loader")
+	if level_loader_scene == null:
+		push_error("[GameLoader] level_loader no encontrado")
+		return
+
+	var loader_scene = level_loader_scene.instantiate()
+	loader_scene.level_path = level_name
+
+	var tree = get_tree()
+	tree.root.add_child(loader_scene)
+
+	if tree.current_scene:
+		tree.current_scene.queue_free()
+
+	tree.current_scene = loader_scene

@@ -6,6 +6,7 @@ extends Control
 @onready var salir: Button = $CenterContainer/VBoxContainer/Salir
 @onready var editor: Button = $CenterContainer/VBoxContainer/Editor
 
+var level_loader
 
 func _ready():
 	GameLoader.start_background_loading()
