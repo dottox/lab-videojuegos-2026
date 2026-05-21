@@ -4,36 +4,75 @@
 
 [node name="MainMenu" type="Control" unique_id=1977606650]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_flhq8")
 
-[node name="CenterContainer" type="CenterContainer" parent="." unique_id=514897235]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Background" type="ColorRect" parent="." unique_id=111111111]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.09, 0.1, 0.14, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=975493103]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=514897235]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="CenterContainer" unique_id=222222222]
 layout_mode = 2
 
-[node name="Jugar" type="Button" parent="CenterContainer/VBoxContainer" unique_id=922696214]
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Panel" unique_id=333333333]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer" unique_id=975493103]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=444444444]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "GameName"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=666666666]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="Jugar" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=922696214]
+custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 text = "Jugar"
 
-[node name="Editor" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1768348047]
+[node name="Editor" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1768348047]
+custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
-text = "Editor
-"
+text = "Editor"
 
-[node name="Opciones" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1823475081]
+[node name="Opciones" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1823475081]
+custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 text = "Opciones"
 
-[node name="Creditos" type="Button" parent="CenterContainer/VBoxContainer" unique_id=458563569]
+[node name="Creditos" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=458563569]
+custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 text = "Creditos"
 
-[node name="Salir" type="Button" parent="CenterContainer/VBoxContainer" unique_id=2007650609]
+[node name="Salir" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=2007650609]
+custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 text = "Salir"

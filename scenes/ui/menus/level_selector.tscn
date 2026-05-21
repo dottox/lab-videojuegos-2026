@@ -11,14 +11,58 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_e5wmo")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=52949820]
-layout_mode = 0
-offset_right = 203.0
-offset_bottom = 219.0
+[node name="Background" type="ColorRect" parent="." unique_id=111111111]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.09, 0.1, 0.14, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer" unique_id=1883939891]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=222222222]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="CenterContainer" unique_id=333333333]
 layout_mode = 2
 
-[node name="Regresar" type="Button" parent="ScrollContainer/VBoxContainer" unique_id=349620845]
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Panel" unique_id=444444444]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer" unique_id=1883939891]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=555555555]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Select a Level"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=52949820]
+custom_minimum_size = Vector2(360, 220)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LevelsList" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/ScrollContainer" unique_id=666666666]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Spacer" type="Control" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=777777777]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="Regresar" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=349620845]
+custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 text = "Volver"
