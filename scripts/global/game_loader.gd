@@ -12,11 +12,11 @@ var common_assets = {
 	"level_editor": "res://scenes/level_editor/level_editor.tscn",
 	"level_loader": "res://scenes/levels/level_loader.tscn",
 	"opciones": "",
-	"creditos": "",
+	"creditos": "res://scenes/ui/menus/credits.tscn",
 }
 
 var loaded_resources = {}
-
+	
 func start_background_loading():
 	print("[game_loader]: Cargando common assets...")
 	
