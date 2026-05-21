@@ -1,10 +1,11 @@
 extends Area2D
 class_name Bullet
 
+@onready var anim_player: AnimationPlayer = $AnimationPlayer
+
 var velocity: Vector2 = Vector2.ZERO
 var bullet_size: float = 2.5
 var bullet_color: Color = Color.RED
-
 var on_despawn: Callable = Callable()
 var active: bool = false
 
@@ -33,6 +34,10 @@ func activate(pos: Vector2, vel: Vector2, size: float, color: Color = Color.RED)
 	visible = true
 	monitoring = true
 	monitorable = true
+	
+	anim_player.stop()
+	anim_player.play("spawn_flash")
+	
 	queue_redraw()
 
 

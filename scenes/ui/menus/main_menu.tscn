@@ -76,3 +76,8 @@ text = "Creditos"
 custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 text = "Salir"
+
+[node name="SpawnTimer" type="Timer" parent="." unique_id=1351984136]
+wait_time = 0.6
+
+[node name="BulletContainer" type="Node2D" parent="." unique_id=1177385944]

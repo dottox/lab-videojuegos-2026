@@ -10,7 +10,7 @@ var common_assets = {
 	"main_menu": "res://scenes/ui/menus/main_menu.tscn",
 	"level_selector": "res://scenes/ui/menus/level_selector.tscn",
 	"level_editor": "res://scenes/level_editor/level_editor.tscn",
-	"level_loader": "res://scenes/levels/level_loader.tscn",
+	"level_loader": "res://scenes/level_loader/level_loader.tscn",
 	"opciones": "",
 	"creditos": "res://scenes/ui/menus/credits.tscn",
 }
