@@ -1,7 +1,7 @@
 extends Control
 
-@onready var level_list = $ScrollContainer/VBoxContainer
-@onready var regresar: Button = $ScrollContainer/VBoxContainer/Regresar
+@onready var level_list = $CenterContainer/Panel/MarginContainer/VBoxContainer/ScrollContainer/LevelsList
+@onready var regresar: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Regresar
 
 const LEVELS_PATH = "res://levels/"
 

@@ -1,10 +1,10 @@
 extends Control
 
-@onready var jugar: Button = $CenterContainer/VBoxContainer/Jugar
-@onready var opciones: Button = $CenterContainer/VBoxContainer/Opciones
-@onready var creditos: Button = $CenterContainer/VBoxContainer/Creditos
-@onready var salir: Button = $CenterContainer/VBoxContainer/Salir
-@onready var editor: Button = $CenterContainer/VBoxContainer/Editor
+@onready var jugar: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Jugar
+@onready var opciones: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Opciones
+@onready var creditos: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Creditos
+@onready var salir: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Salir
+@onready var editor: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Editor
 
 var level_loader
 
