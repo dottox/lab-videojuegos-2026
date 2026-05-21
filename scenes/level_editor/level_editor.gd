@@ -41,6 +41,7 @@ const PREVIEW_EXPORT_PATH := "res://level_preview.cfg"
 @onready var ui_content: Control = $CanvasLayer/UI/Root/Content
 @onready var ui_bottom_bar: Control = $CanvasLayer/UI/Root/BottomBar
 
+@onready var exit_button: Button = $CanvasLayer/UI/Root/TopBar/ExitButton
 @onready var load_music_button: Button = $CanvasLayer/UI/Root/TopBar/LoadMusicButton
 @onready var music_id_edit: LineEdit = $CanvasLayer/UI/Root/TopBar/MusicIdEdit
 @onready var bpm_spin: SpinBox = $CanvasLayer/UI/Root/TopBar/BpmSpin
@@ -254,6 +255,7 @@ func _setup_option_buttons() -> void:
 
 # Conecta señales de UI con sus handlers.
 func _setup_ui() -> void:
+	exit_button.pressed.connect(_on_exit_button_pressed)
 	load_music_button.pressed.connect(_on_load_music_pressed)
 	play_button.pressed.connect(_on_play_pressed)
 	pause_button.pressed.connect(_on_pause_pressed)
@@ -298,6 +300,9 @@ func _setup_ui() -> void:
 	music_file_dialog.file_selected.connect(_on_music_file_selected)
 	export_dialog.file_selected.connect(io_component._on_export_file_selected)
 	import_dialog.file_selected.connect(io_component._on_import_file_selected)
+
+func _on_exit_button_pressed() -> void:
+	GameLoader.load_scene("main_menu")
 
 # Abre el selector de música.
 func _on_load_music_pressed() -> void:

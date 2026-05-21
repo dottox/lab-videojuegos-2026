@@ -53,6 +53,10 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="ExitButton" type="Button" parent="CanvasLayer/UI/Root/TopBar" unique_id=1807992367]
+layout_mode = 2
+text = "Back to Menu"
+
 [node name="LoadMusicButton" type="Button" parent="CanvasLayer/UI/Root/TopBar" unique_id=131762273]
 layout_mode = 2
 text = "Load Music"
