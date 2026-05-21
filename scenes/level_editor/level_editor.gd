@@ -5,12 +5,12 @@ const LevelEditorZones = preload("res://scenes/level_editor/level_editor_zones.g
 const LevelEditorProjectiles = preload("res://scenes/level_editor/level_editor_projectiles.gd")
 const LevelEditorIO = preload("res://scenes/level_editor/level_editor_io.gd")
 
-const LevelLoader = preload("res://scenes/levels/level_loader.gd")
+const LevelLoader = preload("res://scenes/level_loader/level_loader.gd")
 
 const ProjectileMarkerScene := preload("res://scenes/level_editor/projectile_marker.tscn")
 const ZoneAreaScene := preload("res://scenes/level_editor/zone_area.tscn")
 const PlayfieldScene := preload("res://scenes/playfield/playfield.tscn")
-const LivePreviewScene := preload("res://scenes/levels/level_loader.tscn")
+const LivePreviewScene := preload("res://scenes/level_loader/level_loader.tscn")
 
 const PROJECTILE_ENUM_PATHS: Array[String] = [
 	"res://scenes/projectiles/bullet/bullet.gd"
