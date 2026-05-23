@@ -82,7 +82,7 @@ func _read_level_config(config: ConfigFile) -> void:
 	editor.bpm_spin.value = float(config.get_value("meta", "bpm", editor.bpm_spin.value))
 	editor._set_ui_suppressed(false)
 
-	editor.playfields_component.clear.playfields()
+	editor.playfields_component.clear_playfields()
 	var playfield_sections := _sorted_sections_with_prefix(config, "playfields_")
 	for section in playfield_sections:
 		var id := str(config.get_value(section, "id", ""))
@@ -94,7 +94,7 @@ func _read_level_config(config: ConfigFile) -> void:
 		editor.state.playfields.append({"id": id, "rect": rect, "node": playfield_node})
 
 	editor.playfields_component.recalculate_playfield_id_counter()
-	editor.playfields_component.refresh_playfield_list()
+	editor.playfields_component.refresh_playfields_list()
 
 	editor.zones_component.clear_zones()
 	var zone_sections := _sorted_sections_with_prefix(config, "areas_")

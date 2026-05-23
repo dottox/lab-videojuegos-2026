@@ -2,6 +2,7 @@ extends Node2D
 class_name LevelLoader
 
 @onready var entities: Node2D = $entities
+@onready var PlayfieldLayer: Node2D = $PlayfieldLayer
 @onready var music: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 var player
@@ -34,7 +35,8 @@ var level_config: Dictionary = {}
 var bullet_pool: Array[Bullet] = []
 var bullet_pool_size: int = 100
 
-var level_path: String = "res://levels/test.cfg"
+var level_path: String
+var is_in_editor: bool = false
 
 func _ready() -> void:
 	if level_path:
@@ -43,6 +45,9 @@ func _ready() -> void:
 func load_level(level_path: String) -> void:
 	GameLoader.start_background_loading()
 	await GameLoader.loading_finished
+	
+	entities.z_index = 100
+	PlayfieldLayer.z_index = 10
 
 	bullet_scene = GameLoader.get_asset("bullet")
 	playfield_scene = GameLoader.get_asset("playfield")
@@ -146,10 +151,12 @@ func apply_level_config() -> void:
 	start_time_ms = int(meta.get("start_time_ms", 0))
 	music_timer = start_time_ms / 1000.0
 	
+	if playfield_configs.is_empty():
+		return
 	var playfield_data := playfield_configs[next_playfield_index]
 	var playfield: Playfield = playfield_scene.instantiate()
 	
-	entities.add_child(playfield)
+	PlayfieldLayer.add_child(playfield)
 	playfield.set_playfield(playfield_data["id"], _array_to_rect2(playfield_data["rect"]))
 	next_playfield_index += 1
 	
@@ -159,7 +166,7 @@ func apply_level_config() -> void:
 	while next_playfield_index < playfield_configs.size():
 		playfield_data = playfield_configs[next_playfield_index]
 		playfield = playfield_scene.instantiate()
-		entities.add_child(playfield)
+		PlayfieldLayer.add_child(playfield)
 		playfield.set_playfield(playfield_data["id"], _array_to_rect2(playfield_data["rect"]))
 		next_playfield_index += 1
 
@@ -218,7 +225,7 @@ func _physics_process(delta: float) -> void:
 
 func _change_player_to_next_playfield() -> void:
 	var current_playfield = player.playfield
-	for entity in entities.get_children():
+	for entity in PlayfieldLayer.get_children():
 		if entity is Playfield and entity != current_playfield:
 			player.playfield = entity
 			player.global_position = entity.get_center()
@@ -232,4 +239,5 @@ func _array_to_rect2(value: Variant, fallback: Rect2 = Rect2()) -> Rect2:
 	return fallback
 
 func _on_player_died():
-	GameLoader.load_scene("main_menu") #Habría que definir que ocurre al morir
+	if not is_in_editor:
+		GameLoader.load_scene("main_menu") #Habría que definir que ocurre al morir

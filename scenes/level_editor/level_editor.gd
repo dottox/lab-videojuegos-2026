@@ -434,6 +434,7 @@ func _on_live_preview_pressed() -> void:
 	level_loader_component = LivePreviewScene.instantiate()
 	level_loader_component.start_time_ms = state.current_time_ms
 	live_preview_layer.add_child(level_loader_component)
+	level_loader_component.is_in_editor = true
 	level_loader_component.load_level(PREVIEW_EXPORT_PATH)
 	
 	_update_status("Preview exported")
@@ -495,3 +496,44 @@ func _on_zone_clicked(zone_node) -> void:
 	
 func _on_playfield_clicked(playfield_node) -> void:
 	playfields_component._on_playfield_clicked(playfield_node)
+
+
+# Wrapper para limpiar el inspector del proyectil.
+func _clear_projectile_inspector() -> void:
+	projectiles_component.clear_projectile_inspector()
+
+# Wrapper para refrescar la lista de proyectiles.
+func _refresh_projectile_list() -> void:
+	projectiles_component.refresh_projectile_list()
+
+# Wrapper para actualizar el marker visual de un proyectil.
+func _update_projectile_marker(data: Dictionary) -> void:
+	projectiles_component.update_projectile_marker(data)
+
+# Wrapper para actualizar la visibilidad de proyectiles.
+func _update_projectile_visibility() -> void:
+	projectiles_component.update_projectile_visibility()
+
+# Wrapper para limpiar zonas.
+func _clear_zones() -> void:
+	zones_component.clear_zones()
+
+# Wrapper para recalcular el contador de zonas.
+func _recalculate_zone_id_counter() -> void:
+	zones_component.recalculate_zone_id_counter()
+
+# Wrapper para refrescar la lista de zonas.
+func _refresh_zone_list() -> void:
+	zones_component.refresh_zone_list()
+
+# Wrapper para limpiar proyectiles.
+func _clear_projectiles() -> void:
+	projectiles_component.clear_projectiles()
+
+# Wrapper para resaltar la zona de un área.
+func _highlight_zone_for_area(area_id) -> void:
+	zones_component.highlight_zone_for_area(area_id)
+
+# Wrapper para reenviar el click de un marker al componente.
+func _on_projectile_marker_clicked(marker) -> void:
+	projectiles_component._on_projectile_marker_clicked(marker)

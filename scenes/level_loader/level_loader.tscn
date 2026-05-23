@@ -10,3 +10,5 @@ script = ExtResource("1_x3ahk")
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1343104914]
 stream = ExtResource("2_fngju")
+
+[node name="PlayfieldLayer" type="Node2D" parent="." unique_id=1460875559]

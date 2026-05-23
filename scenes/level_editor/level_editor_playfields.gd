@@ -39,6 +39,16 @@ func _select_playfield(index: int) -> void:
 	editor.playfield_height_spin.value = rect.size.y
 	editor._set_ui_suppressed(false)
 
+# Frees all playfield nodes and resets playfield-related editor state.
+func clear_playfields() -> void:
+	for playfield_data in editor.state.playfields:
+		var node = playfield_data.get("node")
+		if node:
+			node.queue_free()
+	editor.state.playfields.clear()
+	editor.state.selected_playfield_index = -1
+	editor.state.playfield_id_counter = 1
+	refresh_playfields_list()
 
 # Adds a new playfield using the current default size and selects it.
 func _on_add_playfield_pressed() -> void:
