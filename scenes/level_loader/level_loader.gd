@@ -45,6 +45,7 @@ func load_level(level_path: String) -> void:
 	playfield = GameLoader.get_asset("playfield").instantiate()
 	rythm_bar = GameLoader.get_asset("rythm_bar").instantiate()
 	player = GameLoader.get_asset("player").instantiate()
+	player.died.connect(_on_player_died)
 
 	spawn_playfield()
 	spawn_player()
@@ -207,3 +208,6 @@ func _physics_process(delta: float) -> void:
 		print("¡Xilo!: " + str(music_timer))
 
 	process_projectiles()
+
+func _on_player_died():
+	GameLoader.load_scene("main_menu") #Habría que definir que ocurre al morir
