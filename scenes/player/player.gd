@@ -1,5 +1,11 @@
 extends CharacterBody2D
 
+#Variables relacionada a eventos
+signal died
+
+#Variables comunes entre estados
+var vida := 10
+
 #Variables relacionadas a debug
 var debug_dash_dir := Vector2.ZERO
 var debug_dash_length := 0.0
@@ -20,12 +26,16 @@ var playfield: Area2D
 func _ready():
 	debug_layer.target = self
 	debug_layer.z_index = 999
+	add_to_group("player") #Defino un grupo 'player' para las colisiones
 	set_mode("normal")
 
 func _draw():
 	debug_normal_mode()
 
 func _physics_process(delta):
+	if vida <= 0:
+		_on_death()
+	
 	current_state.physics_update(self, delta)
 	queue_redraw()
 
@@ -78,3 +88,11 @@ func get_bounds() -> Rect2:
 	var local_pos := player_shape.position + rect.position
 	
 	return Rect2(local_pos, rect.size)
+
+func receive_hit():
+	vida -= 1
+	print(vida)
+
+func _on_death():
+	died.emit()
+	queue_free() #BORRA al jugador
