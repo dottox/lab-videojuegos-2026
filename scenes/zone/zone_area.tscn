@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c1047p6gmikdy"]
 
-[ext_resource type="Script" uid="uid://cq33vb5j1w4ba" path="res://scenes/level_editor/zone_area.gd" id="1"]
+[ext_resource type="Script" uid="uid://cq33vb5j1w4ba" path="res://scenes/zone/zone_area.gd" id="1"]
 
 [node name="ZoneArea" type="Area2D" unique_id=548946029]
 script = ExtResource("1")

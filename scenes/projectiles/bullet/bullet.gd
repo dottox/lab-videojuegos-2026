@@ -16,7 +16,7 @@ func _physics_process(delta: float) -> void:
 	position += velocity * delta
 
 	if not _is_on_screen():
-		print("[bullet] ", self, " not in screen, despawning...")
+		#print("[bullet] ", self, " not in screen, despawning...")
 		despawn()
 
 
@@ -25,7 +25,7 @@ func _draw() -> void:
 
 
 func activate(pos: Vector2, vel: Vector2, size: float, color: Color = Color.RED) -> void:
-	print("[bullet] ", self, " activating...")
+	#print("[bullet] ", self, " activating...")
 	global_position = pos
 	velocity = vel
 	bullet_size = size

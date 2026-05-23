@@ -8,7 +8,7 @@ const LevelEditorIO = preload("res://scenes/level_editor/level_editor_io.gd")
 const LevelLoader = preload("res://scenes/level_loader/level_loader.gd")
 
 const ProjectileMarkerScene := preload("res://scenes/level_editor/projectile_marker.tscn")
-const ZoneAreaScene := preload("res://scenes/level_editor/zone_area.tscn")
+const ZoneAreaScene := preload("res://scenes/zone/zone_area.tscn")
 const PlayfieldScene := preload("res://scenes/playfield/playfield.tscn")
 const LivePreviewScene := preload("res://scenes/level_loader/level_loader.tscn")
 
@@ -30,7 +30,7 @@ const Z_INDEX_PROJECTILES := 10
 
 const PREVIEW_EXPORT_PATH := "res://level_preview.cfg"
 
-@onready var playfield_layer: Node2D = $PlayfieldLayer
+@onready var playfields_layer: Node2D = $PlayfieldsLayer
 @onready var zones_layer: Node2D = $ZonesLayer
 @onready var projectiles_layer: Node2D = $ProjectilesLayer
 @onready var live_preview_layer: Node2D = $LivePreviewLayer
@@ -52,7 +52,9 @@ const PREVIEW_EXPORT_PATH := "res://level_preview.cfg"
 @onready var timeline_slider: HSlider = $CanvasLayer/UI/Root/TopBar/TimelineSlider
 @onready var time_label: Label = $CanvasLayer/UI/Root/TopBar/TimeLabel
 
-@onready var playfield_type_option: OptionButton = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldTypeOption
+@onready var playfield_list: ItemList = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldList
+@onready var add_playfield_button: Button = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons/AddPlayfieldButton
+@onready var remove_playfield_button: Button = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons/RemovePlayfieldButton
 @onready var playfield_pos_x_spin: SpinBox = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldPosXSpin
 @onready var playfield_pos_y_spin: SpinBox = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldPosYSpin
 @onready var playfield_width_spin: SpinBox = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldWidthSpin
@@ -68,7 +70,6 @@ const PREVIEW_EXPORT_PATH := "res://level_preview.cfg"
 @onready var zone_height_spin: SpinBox = $CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneGrid/ZoneHeightSpin
 
 @onready var projectile_list: ItemList = $CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileList
-@onready var add_projectile_button: Button = $CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileButtons/AddProjectileButton
 @onready var delete_projectile_button: Button = $CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileButtons/DeleteProjectileButton
 @onready var projectile_time_spin: SpinBox = $CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid/ProjectileTimeSpin
 @onready var projectile_pos_x_spin: SpinBox = $CanvasLayer/UI/Root/Content/ProjectilesPanel/ProjectilesVBox/ProjectileGrid/ProjectilePosXSpin
@@ -93,11 +94,15 @@ var live_preview
 
 var zones_component: LevelEditorZones
 var projectiles_component: LevelEditorProjectiles
+var playfields_component: LevelEditorPlayfields
 var io_component: LevelEditorIO
 var level_loader_component: LevelLoader
 
 # Inicializa los componentes y prepara el editor.
 func _ready() -> void:
+	playfields_component = LevelEditorPlayfields.new()
+	playfields_component.initialize(self)
+	
 	zones_component = LevelEditorZones.new()
 	zones_component.initialize(self)
 
@@ -191,13 +196,13 @@ func _move_selected_projectile_to_mouse() -> void:
 # Define la prioridad visual de cada capa.
 func _setup_layers() -> void:
 	zones_layer.z_index = Z_INDEX_ZONES
-	playfield_layer.z_index = Z_INDEX_PLAYFIELD
+	playfields_layer.z_index = Z_INDEX_PLAYFIELD
 	projectiles_layer.z_index = Z_INDEX_PROJECTILES
 
 # Crea e inicializa el playfield del editor.
 func _init_playfield() -> void:
 	playfield = PlayfieldScene.instantiate()
-	playfield_layer.add_child(playfield)
+	playfields_layer.add_child(playfield)
 	var viewport_center = get_viewport().get_visible_rect().size / 2.0
 	playfield.global_position = viewport_center + Vector2(0, 100)
 	playfield_pos_x_spin.value = playfield.global_position.x
@@ -235,10 +240,10 @@ func _load_enum_values(path: String, enum_type_name: String) -> Array:
 
 # Rellena los dropdowns con los valores cargados.
 func _setup_option_buttons() -> void:
-	playfield_type_option.clear()
-	for option in state.playfield_types:
-		playfield_type_option.add_item(option)
-	playfield_type_option.select(0)
+	#playfield_type_option.clear()
+	#for option in state.playfield_types:
+	#	playfield_type_option.add_item(option)
+	#playfield_type_option.select(0)
 
 	projectile_type_option.clear()
 	for option in state.projectile_types:
@@ -267,11 +272,13 @@ func _setup_ui() -> void:
 	timeline_slider.value_changed.connect(_on_timeline_changed)
 	preview_toggle_button.pressed.connect(_on_preview_toggle_pressed)
 
-	playfield_type_option.item_selected.connect(_on_playfield_type_selected)
-	playfield_pos_x_spin.value_changed.connect(_on_playfield_position_changed)
-	playfield_pos_y_spin.value_changed.connect(_on_playfield_position_changed)
-	playfield_width_spin.value_changed.connect(_on_playfield_size_changed)
-	playfield_height_spin.value_changed.connect(_on_playfield_size_changed)
+	playfield_list.item_selected.connect(playfields_component._on_playfield_list_selected)
+	add_playfield_button.pressed.connect(playfields_component._on_add_playfield_pressed)
+	remove_playfield_button.pressed.connect(playfields_component._on_remove_playfield_pressed)
+	playfield_pos_x_spin.value_changed.connect(playfields_component._on_playfield_position_changed)
+	playfield_pos_y_spin.value_changed.connect(playfields_component._on_playfield_position_changed)
+	playfield_width_spin.value_changed.connect(playfields_component._on_playfield_size_changed)
+	playfield_height_spin.value_changed.connect(playfields_component._on_playfield_size_changed)
 
 	add_zone_button.pressed.connect(zones_component._on_add_zone_pressed)
 	remove_zone_button.pressed.connect(zones_component._on_remove_zone_pressed)
@@ -383,21 +390,6 @@ func _on_music_id_changed(text: String) -> void:
 func _on_bpm_changed(_value: float) -> void:
 	pass
 
-# Cambia el tipo de playfield activo.
-func _on_playfield_type_selected(index: int) -> void:
-	state.playfield_type = playfield_type_option.get_item_text(index)
-	if playfield and playfield.has_method("set_state"):
-		playfield.set_state(state.playfield_type)
-
-# Actualiza la posición del playfield.
-func _on_playfield_position_changed(_value: float) -> void:
-	if playfield:
-		playfield.global_position = Vector2(playfield_pos_x_spin.value, playfield_pos_y_spin.value)
-
-# Actualiza el tamaño del playfield.
-func _on_playfield_size_changed(_value: float) -> void:
-	if playfield and playfield.has_method("set_size"):
-		playfield.set_size(Vector2(playfield_width_spin.value, playfield_height_spin.value))
 
 # Abre el diálogo de exportación.
 func _on_export_pressed() -> void:
@@ -427,7 +419,7 @@ func _on_live_preview_pressed() -> void:
 		ui_root.visible = true
 		preview_toggle_button.visible = true
 		projectiles_layer.visible = true
-		playfield_layer.visible = true
+		playfields_layer.visible = true
 		
 		return
 		
@@ -437,7 +429,7 @@ func _on_live_preview_pressed() -> void:
 	ui_root.visible = false
 	preview_toggle_button.visible = false
 	projectiles_layer.visible = false
-	playfield_layer.visible = false
+	playfields_layer.visible = false
 
 	level_loader_component = LivePreviewScene.instantiate()
 	level_loader_component.start_time_ms = state.current_time_ms
@@ -498,46 +490,8 @@ func _update_area_options() -> void:
 				return
 	projectile_area_option.select(0)
 
-# Wrapper para limpiar el inspector del proyectil.
-func _clear_projectile_inspector() -> void:
-	projectiles_component.clear_projectile_inspector()
-	
-# Wrapper para refrescar la lista de proyectiles.
-func _refresh_projectile_list() -> void:
-	projectiles_component.refresh_projectile_list()
-
-# Wrapper para actualizar el marker visual de un proyectil.
-func _update_projectile_marker(data: Dictionary) -> void:
-	projectiles_component.update_projectile_marker(data)
-
-# Wrapper para actualizar la visibilidad de proyectiles.
-func _update_projectile_visibility() -> void:
-	projectiles_component.update_projectile_visibility()
-
-# Wrapper para limpiar zonas.
-func _clear_zones() -> void:
-	zones_component.clear_zones()
-
-# Wrapper para recalcular el contador de zonas.
-func _recalculate_zone_id_counter() -> void:
-	zones_component.recalculate_zone_id_counter()
-
-# Wrapper para refrescar la lista de zonas.
-func _refresh_zone_list() -> void:
-	zones_component.refresh_zone_list()
-
-# Wrapper para limpiar proyectiles.
-func _clear_projectiles() -> void:
-	projectiles_component.clear_projectiles()
-
-# Wrapper para resaltar la zona de un área.
-func _highlight_zone_for_area(area_id) -> void:
-	zones_component.highlight_zone_for_area(area_id)
-
-# Wrapper para reenviar el click de una zona al componente.
 func _on_zone_clicked(zone_node) -> void:
 	zones_component._on_zone_clicked(zone_node)
-
-# Wrapper para reenviar el click de un marker al componente.
-func _on_projectile_marker_clicked(marker) -> void:
-	projectiles_component._on_projectile_marker_clicked(marker)
+	
+func _on_playfield_clicked(playfield_node) -> void:
+	playfields_component._on_playfield_clicked(playfield_node)

@@ -7,10 +7,13 @@ var playfield_types: Array[String] = []
 
 var zones: Array[Dictionary] = []
 var projectiles: Array[Dictionary] = []
+var playfields: Array[Dictionary] = []
 
 var selected_zone_index := -1
 var selected_projectile_index := -1
+var selected_playfield_index := -1
 var zone_id_counter := 1
+var playfield_id_counter := 1
 
 var current_time_ms := 0
 var music_length_ms := 0
