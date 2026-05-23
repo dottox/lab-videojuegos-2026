@@ -5,7 +5,7 @@ class_name LevelLoader
 @onready var music: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
 var player
-var playfield
+var playfield_scene
 var rythm_bar
 var bullet_scene
 
@@ -15,6 +15,9 @@ var bpm: float = 120.0
 
 var next_projectile_index: int = 0
 var projectile_configs: Array[Dictionary] = []
+
+var next_playfield_index: int = 0
+var playfield_configs: Array[Dictionary] = []
 
 var synth: Array[int] = []
 var xilo: Array[int] = []
@@ -31,7 +34,7 @@ var level_config: Dictionary = {}
 var bullet_pool: Array[Bullet] = []
 var bullet_pool_size: int = 100
 
-var level_path: String
+var level_path: String = "res://levels/test.cfg"
 
 func _ready() -> void:
 	if level_path:
@@ -42,12 +45,11 @@ func load_level(level_path: String) -> void:
 	await GameLoader.loading_finished
 
 	bullet_scene = GameLoader.get_asset("bullet")
-	playfield = GameLoader.get_asset("playfield").instantiate()
+	playfield_scene = GameLoader.get_asset("playfield")
 	rythm_bar = GameLoader.get_asset("rythm_bar").instantiate()
 	player = GameLoader.get_asset("player").instantiate()
 	player.died.connect(_on_player_died)
 
-	spawn_playfield()
 	spawn_player()
 
 	init_bullet_pool()
@@ -76,7 +78,7 @@ func init_bullet_pool() -> void:
 		entities.add_child(bullet)
 		bullet_pool.append(bullet)
 	
-	print("[level_loader] ", "created bullet pool: ", bullet_pool)
+	#print("[level_loader] ", "created bullet pool: ", bullet_pool)
 
 
 func _get_bullet_from_pool() -> Bullet:
@@ -123,9 +125,10 @@ func parse_level_cfg(path: String) -> void:
 		return
 
 	level_config["meta"] = _config_section_to_dict(cfg, "meta")
-	level_config["playfield"] = _config_section_to_dict(cfg, "playfield")
-
+	
 	for section in cfg.get_sections():
+		if section.begins_with("playfields_"):
+			playfield_configs.append(_config_section_to_dict(cfg, section))
 		if section.begins_with("projectiles_"):
 			projectile_configs.append(_config_section_to_dict(cfg, section))
 
@@ -142,13 +145,24 @@ func apply_level_config() -> void:
 	bpm = float(meta.get("bpm", bpm))
 	start_time_ms = int(meta.get("start_time_ms", 0))
 	music_timer = start_time_ms / 1000.0
+	
+	var playfield_data := playfield_configs[next_playfield_index]
+	var playfield: Playfield = playfield_scene.instantiate()
+	
+	entities.add_child(playfield)
+	playfield.set_playfield(playfield_data["id"], _array_to_rect2(playfield_data["rect"]))
+	next_playfield_index += 1
+	
+	player.playfield = playfield
+	player.global_position = playfield.get_center()
 
-	var playfield_cfg: Dictionary = level_config.get("playfield", {})
-	playfield.set_state(str(playfield_cfg["type"]))
-	var p = playfield_cfg["position"]
-	playfield.global_position = Vector2(float(p[0]), float(p[1]))
-	var s = playfield_cfg["size"]
-	playfield.set_size(Vector2(float(s[0]), float(s[1])))
+	while next_playfield_index < playfield_configs.size():
+		playfield_data = playfield_configs[next_playfield_index]
+		playfield = playfield_scene.instantiate()
+		entities.add_child(playfield)
+		playfield.set_playfield(playfield_data["id"], _array_to_rect2(playfield_data["rect"]))
+		next_playfield_index += 1
+
 		
 func _skip_projectiles_before_start_time() -> void:
 	while next_projectile_index < projectile_configs.size():
@@ -160,13 +174,6 @@ func _skip_projectiles_before_start_time() -> void:
 
 func spawn_player() -> void:
 	entities.add_child(player)
-	player.global_position = playfield.global_position
-	player.playfield = playfield
-
-
-func spawn_playfield() -> void:
-	entities.add_child(playfield)
-	playfield.global_position = (get_viewport().get_visible_rect().size / 2.0) + Vector2(0, 100)
 
 
 func init_progress_bar() -> void:
@@ -205,9 +212,24 @@ func _physics_process(delta: float) -> void:
 		rythm_bar.update_song_time(music_timer)
 
 	if Input.is_action_just_pressed("hit_debug"):
-		print("¡Xilo!: " + str(music_timer))
+		_change_player_to_next_playfield()
 
 	process_projectiles()
+
+func _change_player_to_next_playfield() -> void:
+	var current_playfield = player.playfield
+	for entity in entities.get_children():
+		if entity is Playfield and entity != current_playfield:
+			player.playfield = entity
+			player.global_position = entity.get_center()
+			return
+	push_warning("No se encontro otra playfield")
+
+# Converts an array-like value into a Rect2, or returns the fallback.
+func _array_to_rect2(value: Variant, fallback: Rect2 = Rect2()) -> Rect2:
+	if value is Array and value.size() >= 4:
+		return Rect2(float(value[0]), float(value[1]), float(value[2]), float(value[3]))
+	return fallback
 
 func _on_player_died():
 	GameLoader.load_scene("main_menu") #Habría que definir que ocurre al morir

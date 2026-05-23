@@ -48,9 +48,11 @@ func _write_level_config(config: ConfigFile) -> void:
 	config.set_value("meta", "start_time_ms", editor.state.current_time_ms)
 
 	# Playfield first because it's the spatial base for zones/projectiles.
-	config.set_value("playfield", "type", editor.state.playfield_type)
-	config.set_value("playfield", "position", _vector2_to_array(editor.playfield.global_position if editor.playfield else Vector2.ZERO))
-	config.set_value("playfield", "size", [editor.playfield_width_spin.value, editor.playfield_height_spin.value])
+	for i in editor.state.playfields.size():
+		var playfield_data: Dictionary = editor.state.playfields[i]
+		var section := "playfields_%d" % i
+		config.set_value(section, "id", playfield_data.get("id", ""))
+		config.set_value(section, "rect", _rect2_to_array(playfield_data.get("rect", Rect2())))
 
 	# Zones in a stable order.
 	for i in editor.state.zones.size():
@@ -80,25 +82,19 @@ func _read_level_config(config: ConfigFile) -> void:
 	editor.bpm_spin.value = float(config.get_value("meta", "bpm", editor.bpm_spin.value))
 	editor._set_ui_suppressed(false)
 
-	var playfield_type := str(config.get_value("playfield", "type", editor.state.playfield_type))
-	editor.state.playfield_type = playfield_type
-	editor._set_option_button_value(editor.playfield_type_option, playfield_type)
+	editor.playfields_component.clear.playfields()
+	var playfield_sections := _sorted_sections_with_prefix(config, "playfields_")
+	for section in playfield_sections:
+		var id := str(config.get_value(section, "id", ""))
+		var rect := _array_to_rect2(config.get_value(section, "rect", [0, 0, 0, 0]), Rect2())
+		var playfield_node = editor.PlayfieldScene.instantiate()
+		editor.playfields_layer.add_child(playfield_node)
+		playfield_node.set_playfield(id, rect)
+		playfield_node.clicked.connect(editor._on_playfield_clicked)
+		editor.state.playfields.append({"id": id, "rect": rect, "node": playfield_node})
 
-	var playfield_pos := _array_to_vector2(
-		config.get_value("playfield", "position", _vector2_to_array(editor.playfield.global_position if editor.playfield else Vector2.ZERO)),
-		editor.playfield.global_position if editor.playfield else Vector2.ZERO
-	)
-	var playfield_size := _array_to_vector2(
-		config.get_value("playfield", "size", [editor.playfield_width_spin.value, editor.playfield_height_spin.value]),
-		Vector2(editor.playfield_width_spin.value, editor.playfield_height_spin.value)
-	)
-
-	editor.playfield_pos_x_spin.value = playfield_pos.x
-	editor.playfield_pos_y_spin.value = playfield_pos.y
-	editor.playfield_width_spin.value = playfield_size.x
-	editor.playfield_height_spin.value = playfield_size.y
-	editor._on_playfield_position_changed(0)
-	editor._on_playfield_size_changed(0)
+	editor.playfields_component.recalculate_playfield_id_counter()
+	editor.playfields_component.refresh_playfield_list()
 
 	editor.zones_component.clear_zones()
 	var zone_sections := _sorted_sections_with_prefix(config, "areas_")
