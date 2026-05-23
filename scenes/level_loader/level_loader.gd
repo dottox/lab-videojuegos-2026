@@ -48,6 +48,7 @@ func load_level(level_path: String) -> void:
 	playfield_scene = GameLoader.get_asset("playfield")
 	rythm_bar = GameLoader.get_asset("rythm_bar").instantiate()
 	player = GameLoader.get_asset("player").instantiate()
+	player.died.connect(_on_player_died)
 
 	spawn_player()
 
@@ -229,3 +230,6 @@ func _array_to_rect2(value: Variant, fallback: Rect2 = Rect2()) -> Rect2:
 	if value is Array and value.size() >= 4:
 		return Rect2(float(value[0]), float(value[1]), float(value[2]), float(value[3]))
 	return fallback
+
+func _on_player_died():
+	GameLoader.load_scene("main_menu") #Habría que definir que ocurre al morir

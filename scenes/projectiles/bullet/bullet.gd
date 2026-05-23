@@ -2,6 +2,8 @@ extends Area2D
 class_name Bullet
 
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
+@onready var bullet_shape: CollisionShape2D = $CollisionShape2D
+@onready var debug_layer: Node2D = $DebugLayer
 
 var velocity: Vector2 = Vector2.ZERO
 var bullet_size: float = 2.5
@@ -9,8 +11,12 @@ var bullet_color: Color = Color.RED
 var on_despawn: Callable = Callable()
 var active: bool = false
 
+func _ready() -> void:
+	debug_layer.target = self
+	debug_layer.z_index = 999
+	body_entered.connect(_on_body_entered)
 
-func _physics_process(delta: float) -> void:
+func _physics_process(delta: float) -> void:	
 	if not active:
 		return
 	position += velocity * delta
@@ -47,6 +53,7 @@ func reset_state() -> void:
 	visible = false
 	monitoring = false
 	monitorable = false
+	position = Vector2.ZERO
 
 
 func despawn() -> void:
@@ -60,3 +67,18 @@ func despawn() -> void:
 func _is_on_screen() -> bool:
 	var viewport_rect := get_viewport().get_visible_rect()
 	return viewport_rect.grow(100.0).has_point(global_position)
+
+func get_bounds() -> Rect2:
+	var shape := bullet_shape.shape as CircleShape2D
+	
+	var diametro := bullet_size * 2
+	
+	var top_left := Vector2(bullet_shape.position - Vector2(bullet_size, bullet_size))
+	var down_right := Vector2(diametro, diametro)
+	
+	return Rect2(top_left, down_right)
+
+func _on_body_entered(body):
+	if body.is_in_group("player"):
+		body.receive_hit() #Esto le indica al jugador que recibió un hit
+		despawn()
