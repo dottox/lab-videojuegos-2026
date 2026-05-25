@@ -49,29 +49,30 @@ func _write_level_config(config: ConfigFile) -> void:
 
 	# Playfield first because it's the spatial base for zones/projectiles.
 	for i in editor.state.playfields.size():
-		var playfield_data: Dictionary = editor.state.playfields[i]
+		var pf: Playfield = editor.state.playfields[i]
 		var section := "playfields_%d" % i
-		config.set_value(section, "id", playfield_data.get("id", ""))
-		config.set_value(section, "rect", _rect2_to_array(playfield_data.get("rect", Rect2())))
+		config.set_value(section, "id", pf.id)
+		config.set_value(section, "rect", _rect2_to_array(pf.rect))
 
 	# Zones in a stable order.
 	for i in editor.state.zones.size():
-		var zone_data: Dictionary = editor.state.zones[i]
-		var section := "areas_%d" % i
-		config.set_value(section, "id", zone_data.get("id", ""))
-		config.set_value(section, "rect", _rect2_to_array(zone_data.get("rect", Rect2())))
+		var zone: ZoneArea = editor.state.zones[i]
+		var section := "zones_%d" % i
+		config.set_value(section, "id", zone.id)
+		config.set_value(section, "rect", _rect2_to_array(zone.rect))
 
 	# Projectiles in a stable order.
+	_sort_projectile_list_by_time()
 	for i in editor.state.projectiles.size():
-		var projectile_data: Dictionary = editor.state.projectiles[i]
+		var proj: Bullet = editor.state.projectiles[i]
 		var section := "projectiles_%d" % i
-		config.set_value(section, "time_ms", int(projectile_data.get("time_ms", 0)))
-		config.set_value(section, "pos", _vector2_to_array(projectile_data.get("pos", Vector2.ZERO)))
-		config.set_value(section, "speed", float(projectile_data.get("speed", 0.0)))
-		config.set_value(section, "angle_deg", float(projectile_data.get("angle_deg", 0.0)))
-		config.set_value(section, "type", projectile_data.get("type", ""))
-		config.set_value(section, "pattern", projectile_data.get("pattern"))
-		config.set_value(section, "area_id", projectile_data.get("area_id"))
+		config.set_value(section, "time_ms", int(proj.time_ms))
+		config.set_value(section, "pos", _vector2_to_array(proj.pos))
+		config.set_value(section, "speed", float(proj.speed))
+		config.set_value(section, "angle_deg", float(proj.angle))
+		config.set_value(section, "type", proj.type)
+		config.set_value(section, "pattern", proj.pattern)
+		config.set_value(section, "zone_id", proj.zone_id)
 
 # Restores editor state from a ConfigFile.
 func _read_level_config(config: ConfigFile) -> void:
@@ -85,27 +86,27 @@ func _read_level_config(config: ConfigFile) -> void:
 	editor.playfields_component.clear_playfields()
 	var playfield_sections := _sorted_sections_with_prefix(config, "playfields_")
 	for section in playfield_sections:
-		var id := str(config.get_value(section, "id", ""))
+		var id: int = config.get_value(section, "id", "")
 		var rect := _array_to_rect2(config.get_value(section, "rect", [0, 0, 0, 0]), Rect2())
 		var playfield_node = editor.PlayfieldScene.instantiate()
 		editor.playfields_layer.add_child(playfield_node)
 		playfield_node.set_playfield(id, rect)
 		playfield_node.clicked.connect(editor._on_playfield_clicked)
-		editor.state.playfields.append({"id": id, "rect": rect, "node": playfield_node})
+		editor.state.playfields.append(playfield_node)
 
 	editor.playfields_component.recalculate_playfield_id_counter()
 	editor.playfields_component.refresh_playfields_list()
 
 	editor.zones_component.clear_zones()
-	var zone_sections := _sorted_sections_with_prefix(config, "areas_")
+	var zone_sections := _sorted_sections_with_prefix(config, "zones_")
 	for section in zone_sections:
-		var id := str(config.get_value(section, "id", ""))
+		var id: int = config.get_value(section, "id", "")
 		var rect := _array_to_rect2(config.get_value(section, "rect", [0, 0, 0, 0]), Rect2())
 		var zone_node = editor.ZoneAreaScene.instantiate()
 		editor.zones_layer.add_child(zone_node)
 		zone_node.set_zone(id, rect)
 		zone_node.clicked.connect(editor._on_zone_clicked)
-		editor.state.zones.append({"id": id, "rect": rect, "node": zone_node})
+		editor.state.zones.append(zone_node)
 
 	editor.zones_component.recalculate_zone_id_counter()
 	editor.zones_component.refresh_zone_list()
@@ -119,26 +120,23 @@ func _read_level_config(config: ConfigFile) -> void:
 		var speed := float(config.get_value(section, "speed", 0.0))
 		var angle_deg := float(config.get_value(section, "angle_deg", 0.0))
 		var projectile_type := str(config.get_value(section, "type", editor.state.projectile_types[0] if editor.state.projectile_types.size() > 0 else "basic"))
-		var pattern = config.get_value(section, "pattern", null)
-		var area_id = config.get_value(section, "area_id", null)
+		var pattern = config.get_value(section, "pattern", "")
+		var zone_id = config.get_value(section, "zone_id", 0)
 
 		var marker = editor.ProjectileMarkerScene.instantiate()
 		editor.projectiles_layer.add_child(marker)
 		marker.clicked.connect(editor._on_projectile_marker_clicked)
+		marker.time_ms = editor.state.current_time_ms
 		marker.global_position = pos
-
-		var projectile_data := {
-			"time_ms": time_ms,
-			"pos": pos,
-			"speed": speed,
-			"angle_deg": angle_deg,
-			"type": projectile_type,
-			"pattern": pattern,
-			"area_id": area_id,
-			"node": marker
-		}
-		editor.state.projectiles.append(projectile_data)
-		editor.projectiles_component.update_projectile_marker(projectile_data)
+		marker.pos = pos
+		marker.speed = editor.projectile_speed_spin.value
+		marker.angle = editor.projectile_angle_spin.value
+		marker.pattern = pattern
+		marker.zone_id = zone_id
+		marker.type = "basic" # TODO
+		
+		editor.state.projectiles.append(marker)
+		editor.projectiles_component.update_projectile_marker(marker)
 
 	editor.projectiles_component.refresh_projectile_list()
 	editor.projectiles_component.update_projectile_visibility()
@@ -210,3 +208,8 @@ func _resolve_path(path: String) -> String:
 	if path.begins_with("res://") or path.begins_with("user://"):
 		return path
 	return path
+
+func _sort_projectile_list_by_time() -> void:
+	editor.state.projectiles.sort_custom(func(a, b):
+		return a.time_ms < b.time_ms
+	)

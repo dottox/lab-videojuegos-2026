@@ -114,7 +114,7 @@ func _ready() -> void:
 
 	set_process_unhandled_input(true)
 	_setup_layers()
-	_init_playfield()
+	#_init_playfield()
 	_load_enums()
 	_setup_option_buttons()
 	_setup_ui()
@@ -167,12 +167,10 @@ func _select_projectile_close_to_mouse(max_radius: float = 64.0) -> void:
 
 	for i in range(state.projectiles.size()):
 		var proj = state.projectiles[i]
-		var node = proj.get("node")
-		if node == null or not node.visible:
+		if proj == null or not proj.visible:
 			continue
 
-		var proj_pos: Variant = proj.get("pos", node.global_position)
-		var dist := mouse_pos.distance_to(proj_pos)
+		var dist := mouse_pos.distance_to(proj.pos)
 		if dist <= closest_dist:
 			closest_dist = dist
 			closest_index = i
@@ -283,7 +281,6 @@ func _setup_ui() -> void:
 	add_zone_button.pressed.connect(zones_component._on_add_zone_pressed)
 	remove_zone_button.pressed.connect(zones_component._on_remove_zone_pressed)
 	zone_list.item_selected.connect(zones_component._on_zone_list_selected)
-	zone_id_edit.text_changed.connect(zones_component._on_zone_id_changed)
 	zone_pos_x_spin.value_changed.connect(zones_component._on_zone_position_changed)
 	zone_pos_y_spin.value_changed.connect(zones_component._on_zone_position_changed)
 	zone_width_spin.value_changed.connect(zones_component._on_zone_size_changed)
@@ -445,14 +442,14 @@ func _on_preview_toggle_pressed() -> void:
 	state.preview_mode = not state.preview_mode
 	ui_content.visible = not state.preview_mode
 	ui_bottom_bar.visible = not state.preview_mode
-	playfield.visible = state.preview_mode
+	#playfield.visible = state.preview_mode
 	preview_toggle_button.text = "Editor" if state.preview_mode else "Preview"
 
 # Ajusta el rango de la timeline según música y proyectiles.
 func _update_timeline_range() -> void:
 	var max_time = state.music_length_ms
-	for data in state.projectiles:
-		max_time = max(max_time, int(data.get("time_ms", 0)))
+	for proj in state.projectiles:
+		max_time = max(max_time, proj.time_ms)
 	timeline_slider.max_value = max(max_time, 1000)
 	projectile_time_spin.max_value = timeline_slider.max_value
 	_set_current_time_ms(state.current_time_ms, false)
@@ -477,16 +474,16 @@ func _set_option_button_value(button: OptionButton, value: String) -> void:
 
 # Reconstruye las opciones de área disponibles para proyectiles.
 func _update_area_options() -> void:
-	var selected_area_id = null
+	var selected_zone_id = null
 	if state.selected_projectile_index >= 0 and state.selected_projectile_index < state.projectiles.size():
-		selected_area_id = state.projectiles[state.selected_projectile_index].get("area_id")
+		selected_zone_id = state.projectiles[state.selected_projectile_index].get("zone_id")
 	projectile_area_option.clear()
 	projectile_area_option.add_item("None")
-	for zone_data in state.zones:
-		projectile_area_option.add_item(zone_data.get("id", ""))
-	if selected_area_id != null:
+	for zone in state.zones:
+		projectile_area_option.add_item(str(zone.id))
+	if selected_zone_id != null:
 		for i in projectile_area_option.item_count:
-			if projectile_area_option.get_item_text(i) == selected_area_id:
+			if projectile_area_option.get_item_text(i) == selected_zone_id:
 				projectile_area_option.select(i)
 				return
 	projectile_area_option.select(0)
@@ -507,8 +504,8 @@ func _refresh_projectile_list() -> void:
 	projectiles_component.refresh_projectile_list()
 
 # Wrapper para actualizar el marker visual de un proyectil.
-func _update_projectile_marker(data: Dictionary) -> void:
-	projectiles_component.update_projectile_marker(data)
+func _update_projectile_marker(proj: Bullet) -> void:
+	projectiles_component.update_projectile_marker(proj)
 
 # Wrapper para actualizar la visibilidad de proyectiles.
 func _update_projectile_visibility() -> void:
@@ -531,8 +528,8 @@ func _clear_projectiles() -> void:
 	projectiles_component.clear_projectiles()
 
 # Wrapper para resaltar la zona de un área.
-func _highlight_zone_for_area(area_id) -> void:
-	zones_component.highlight_zone_for_area(area_id)
+func _highlight_zone_for_area(zone_id) -> void:
+	zones_component.highlight_zone_for_area(zone_id)
 
 # Wrapper para reenviar el click de un marker al componente.
 func _on_projectile_marker_clicked(marker) -> void:

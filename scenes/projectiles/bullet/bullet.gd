@@ -5,6 +5,14 @@ class_name Bullet
 @onready var bullet_shape: CollisionShape2D = $CollisionShape2D
 @onready var debug_layer: Node2D = $DebugLayer
 
+var time_ms: int
+var pos: Vector2 = Vector2.ZERO
+var speed: float = 200
+var angle: int = 0 
+var type: String = "normal"
+var pattern: String = "single"
+var zone_id: int
+
 var velocity: Vector2 = Vector2.ZERO
 var bullet_size: float = 2.5
 var bullet_color: Color = Color.RED
@@ -12,8 +20,9 @@ var on_despawn: Callable = Callable()
 var active: bool = false
 
 func _ready() -> void:
-	debug_layer.target = self
-	debug_layer.z_index = 999
+	if debug_layer:
+		debug_layer.target = self
+		debug_layer.z_index = 999
 	body_entered.connect(_on_body_entered)
 
 func _physics_process(delta: float) -> void:	
@@ -38,11 +47,12 @@ func activate(pos: Vector2, vel: Vector2, size: float, color: Color = Color.RED)
 	bullet_color = color
 	active = true
 	visible = true
-	monitoring = true
-	monitorable = true
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
 	
-	anim_player.stop()
-	anim_player.play("spawn_flash")
+	if anim_player:
+		anim_player.stop()
+		anim_player.play("spawn_flash")
 	
 	queue_redraw()
 
@@ -51,8 +61,8 @@ func reset_state() -> void:
 	active = false
 	velocity = Vector2.ZERO
 	visible = false
-	monitoring = false
-	monitorable = false
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
 	position = Vector2.ZERO
 
 

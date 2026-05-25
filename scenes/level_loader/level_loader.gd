@@ -15,10 +15,12 @@ var music_timer: float = 0.0
 var bpm: float = 120.0
 
 var next_projectile_index: int = 0
-var projectile_configs: Array[Dictionary] = []
+var projectile_configs: Array[Bullet] = []
 
 var next_playfield_index: int = 0
-var playfield_configs: Array[Dictionary] = []
+var playfield_configs: Array[Playfield] = []
+
+var zone_configs: Array[ZoneArea] = []
 
 var synth: Array[int] = []
 var xilo: Array[int] = []
@@ -55,12 +57,13 @@ func load_level(level_path: String) -> void:
 	player = GameLoader.get_asset("player").instantiate()
 	player.died.connect(_on_player_died)
 
-	spawn_player()
 
 	init_bullet_pool()
 	load_level_config(level_path)
 	apply_level_config()
 	_skip_projectiles_before_start_time()
+	
+	spawn_player()
 
 	setup_level()
 	init_progress_bar()
@@ -130,13 +133,38 @@ func parse_level_cfg(path: String) -> void:
 		return
 
 	level_config["meta"] = _config_section_to_dict(cfg, "meta")
-	
+
 	for section in cfg.get_sections():
 		if section.begins_with("playfields_"):
-			playfield_configs.append(_config_section_to_dict(cfg, section))
-		if section.begins_with("projectiles_"):
-			projectile_configs.append(_config_section_to_dict(cfg, section))
+			var playfield: Playfield = playfield_scene.instantiate()
+			var data := _config_section_to_dict(cfg, section)
+			PlayfieldLayer.add_child(playfield)
+			playfield.set_playfield(data.get("id", ""), _array_to_rect2(data.get("rect", [0, 0, 0, 0]), Rect2()))
+			playfield_configs.append(playfield)
 
+		elif section.begins_with("zones_"):
+			var zone: ZoneArea = ZoneArea.new()
+			var data := _config_section_to_dict(cfg, section)
+			zone.set_zone(data.get("id", ""), _array_to_rect2(data.get("rect", [0, 0, 0, 0]), Rect2()))
+			zone_configs.append(zone)
+
+		elif section.begins_with("projectiles_"):
+			var data := _config_section_to_dict(cfg, section)
+			var proj: Bullet = Bullet.new()
+			proj.time_ms = int(data.get("time_ms", 0))
+			proj.pos = _array_to_vector2(data.get("pos", [0, 0]), Vector2.ZERO)
+			proj.speed = float(data.get("speed", 0.0))
+			proj.angle = float(data.get("angle_deg", 0.0))
+			proj.type = str(data.get("type", ""))
+			proj.pattern = str(data.get("pattern", ""))
+			proj.zone_id = data.get("zone_id", 0)
+
+			if proj.zone_id != 0:
+				var zone := _get_zone_from_id(proj.zone_id)
+				if zone != null:
+					proj.pos = _random_projectile_pos_to_zone_bound(zone)
+
+			projectile_configs.append(proj)
 
 func _config_section_to_dict(cfg: ConfigFile, section: String) -> Dictionary:
 	var d: Dictionary = {}
@@ -174,13 +202,15 @@ func apply_level_config() -> void:
 func _skip_projectiles_before_start_time() -> void:
 	while next_projectile_index < projectile_configs.size():
 		var projectile := projectile_configs[next_projectile_index]
-		var spawn_time := int(projectile.get("time_ms", 0))
+		var spawn_time := projectile.time_ms
 		if spawn_time >= start_time_ms:
 			break
 		next_projectile_index += 1
 
 func spawn_player() -> void:
 	entities.add_child(player)
+	player.playfield = playfield_configs[0]
+	player.global_position = playfield_configs[0].get_center()
 
 
 func init_progress_bar() -> void:
@@ -198,18 +228,18 @@ func init_music() -> void:
 func process_projectiles() -> void:
 	while next_projectile_index < projectile_configs.size():
 		var projectile := projectile_configs[next_projectile_index]
-		var spawn_time := float(projectile.get("time_ms", 0)) / 1000.0
+		var spawn_time := float(projectile.time_ms) / 1000.0
 
 		if music_timer < spawn_time:
 			break
-
+		
 		spawn_pattern_from_config(projectile)
 		next_projectile_index += 1
 
 
-func spawn_pattern_from_config(data: Dictionary) -> void:
-	var pattern_name := str(data.get("pattern", "single"))
-	BulletPatterns.spawn(pattern_name, self, data)
+func spawn_pattern_from_config(proj: Bullet) -> void:
+	var pattern_name := proj.pattern
+	BulletPatterns.spawn(pattern_name, self, proj)
 
 
 func _physics_process(delta: float) -> void:
@@ -241,3 +271,21 @@ func _array_to_rect2(value: Variant, fallback: Rect2 = Rect2()) -> Rect2:
 func _on_player_died():
 	if not is_in_editor:
 		GameLoader.load_scene("main_menu") #Habría que definir que ocurre al morir
+
+func _get_zone_from_id(zone_id: int) -> ZoneArea:
+	for zone in zone_configs:
+		if zone.id == zone_id:
+			return zone
+	return null
+		
+func _random_projectile_pos_to_zone_bound(zone: ZoneArea) -> Vector2:
+	var rect := zone.rect
+	var x := randi_range(int(rect.position.x), int(rect.position.x + rect.size.x))
+	var y := randi_range(int(rect.position.y), int(rect.position.y + rect.size.y))
+	return Vector2(x, y)
+
+# Converts an array-like value into a Vector2, or returns the fallback.
+func _array_to_vector2(value: Variant, fallback: Vector2) -> Vector2:
+	if value is Array and value.size() >= 2:
+		return Vector2(float(value[0]), float(value[1]))
+	return fallback

@@ -4,8 +4,8 @@ class_name Playfield
 var NormalState = preload("res://scenes/playfield/states/normal_state.gd")
 signal clicked(playfield)
 
-@export var playfield_id: String = "playfield"
-var playfield_rect := Rect2(Vector2.ZERO, Vector2(500, 500))
+var id: int = 0
+var rect := Rect2(Vector2.ZERO, Vector2(500, 500))
 
 var current_state
 
@@ -16,9 +16,9 @@ func _ready():
 	_refresh()
 
 func _draw():
-	var outer_rect := playfield_rect.grow(10)
+	var outer_rect := rect.grow(10)
 	draw_rect(outer_rect, Color.WHITE)
-	draw_rect(playfield_rect, Color.BLACK)
+	draw_rect(rect, Color.BLACK)
 
 func _physics_process(delta):
 	current_state.physics_update(self, delta)
@@ -36,19 +36,19 @@ func set_state(state: String):
 			change_state(NormalState.new())
 
 func set_size(nsize: Vector2):
-	playfield_rect.size = nsize
+	rect.size = nsize
 	_refresh()
 
-func set_playfield(id: String, rect: Rect2) -> void:
-	playfield_id = id
-	playfield_rect = rect
+func set_playfield(n_id: int, n_rect: Rect2) -> void:
+	id = n_id
+	rect = n_rect
 	_refresh()
 
 func get_bounds() -> Rect2:
-	return playfield_rect
+	return rect
 
 func get_center() -> Vector2:
-	return playfield_rect.position + playfield_rect.size / 2.0
+	return rect.position + rect.size / 2.0
 	
 func _refresh() -> void:
 	if collision_shape == null:
@@ -59,6 +59,6 @@ func _refresh() -> void:
 		shape = RectangleShape2D.new()
 		collision_shape.shape = shape
 
-	shape.size = playfield_rect.size
-	collision_shape.position = playfield_rect.size / 2.0
+	shape.size = rect.size
+	collision_shape.position = rect.size / 2.0
 	queue_redraw()

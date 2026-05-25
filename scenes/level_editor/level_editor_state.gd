@@ -5,9 +5,9 @@ var projectile_types: Array[String] = []
 var projectile_patterns: Array[String] = []
 var playfield_types: Array[String] = []
 
-var zones: Array[Dictionary] = []
-var projectiles: Array[Dictionary] = []
-var playfields: Array[Dictionary] = []
+var zones: Array[ZoneArea] = []
+var projectiles: Array[Bullet] = []
+var playfields: Array[Playfield] = []
 
 var selected_zone_index := -1
 var selected_projectile_index := -1

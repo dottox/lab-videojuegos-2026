@@ -7,37 +7,33 @@ const PATTERNS := {
 }
 
 
-static func spawn(pattern_name: String, loader: LevelLoader, data: Dictionary) -> void:
+static func spawn(pattern_name: String, loader: LevelLoader, bullet: Bullet) -> void:
 	match pattern_name:
 		"single":
-			single(loader, data)
+			single(loader, bullet)
 		"circle":
-			circle(loader, data)
+			circle(loader, bullet)
 		_:
 			push_warning("Unknown bullet pattern: %s" % pattern_name)
-			single(loader, data)
+			single(loader, bullet)
 
 
-static func single(loader: LevelLoader, data: Dictionary) -> void:
-	var pos := _get_pos(data)
-	var velocity := _get_velocity(data)
-	var size := float(data.get("size", loader.bullet_size))
-	var color: Variant = data.get("color", Color.RED)
+static func single(loader: LevelLoader, b: Bullet) -> void:
+	var size := loader.bullet_size
+	var color := Color.RED
 
-	loader.spawn_bullet(pos, velocity, size, color)
+	loader.spawn_bullet(b.pos, Vector2.RIGHT.rotated(deg_to_rad(b.angle)) * b.speed, size, color)
 
 
-static func circle(loader: LevelLoader, data: Dictionary) -> void:
-	var pos := _get_pos(data)
-	var count := int(data.get("count", 8))
-	var speed := float(data.get("speed", 200.0))
-	var size := float(data.get("size", loader.bullet_size))
-	var color: Variant = data.get("color", Color.RED)
+static func circle(loader: LevelLoader, b: Bullet) -> void:
+	var count := 8
+	var size := loader.bullet_size
+	var color := Color.RED
 
 	for i in count:
 		var angle := TAU * float(i) / float(count)
 		var direction := Vector2.RIGHT.rotated(angle)
-		loader.spawn_bullet(pos, direction * speed, size, color)
+		loader.spawn_bullet(b.pos, direction * b.speed, size, color)
 
 
 static func _get_pos(data: Dictionary) -> Vector2:
