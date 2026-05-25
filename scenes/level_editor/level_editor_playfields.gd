@@ -12,7 +12,7 @@ func refresh_playfields_list() -> void:
 	var previous = editor.state.selected_playfield_index
 	editor.playfield_list.clear()
 	for data in editor.state.playfields:
-		editor.playfield_list.add_item(data.get("id", "n/a"))
+		editor.playfield_list.add_item("Playfield #%d" % data.id)
 	if previous >= 0 and previous < editor.state.playfields.size():
 		editor.playfield_list.select(previous)
 
@@ -30,8 +30,8 @@ func _select_playfield(index: int) -> void:
 		return
 	editor.state.selected_playfield_index = index
 	editor.playfield_list.select(index)
-	var playfield_data = editor.state.playfields[index]
-	var rect: Rect2 = playfield_data["rect"]
+	var pf = editor.state.playfields[index]
+	var rect: Rect2 = pf.rect
 	editor._set_ui_suppressed(true)
 	editor.playfield_pos_x_spin.value = rect.position.x
 	editor.playfield_pos_y_spin.value = rect.position.y
@@ -41,10 +41,8 @@ func _select_playfield(index: int) -> void:
 
 # Frees all playfield nodes and resets playfield-related editor state.
 func clear_playfields() -> void:
-	for playfield_data in editor.state.playfields:
-		var node = playfield_data.get("node")
-		if node:
-			node.queue_free()
+	for pf_node in editor.state.playfields:
+		pf_node.queue_free()
 	editor.state.playfields.clear()
 	editor.state.selected_playfield_index = -1
 	editor.state.playfield_id_counter = 1
@@ -52,16 +50,19 @@ func clear_playfields() -> void:
 
 # Adds a new playfield using the current default size and selects it.
 func _on_add_playfield_pressed() -> void:
-	var playfield_id = "playfield_%d" % editor.state.playfield_id_counter
+	var playfield_id = editor.state.playfield_id_counter
 	editor.state.playfield_id_counter += 1
+	
 	var size = Vector2(editor.playfield_width_spin.value, editor.playfield_height_spin.value)
 	var position = Vector2(editor.playfield_pos_x_spin.value, editor.playfield_pos_y_spin.value)
 	var rect = Rect2(position, size)
-	var playfield_node = editor.PlayfieldScene.instantiate()
-	editor.playfields_layer.add_child(playfield_node)
-	playfield_node.set_playfield(playfield_id, rect)
-	playfield_node.clicked.connect(editor._on_playfield_clicked)
-	editor.state.playfields.append({"id": playfield_id, "rect": rect, "node": playfield_node})
+	
+	var new_node = editor.PlayfieldScene.instantiate()
+	editor.playfields_layer.add_child(new_node)
+	new_node.set_playfield(playfield_id, rect)
+	new_node.clicked.connect(editor._on_playfield_clicked)
+	editor.state.playfields.append(new_node)
+	
 	refresh_playfields_list()
 	_select_playfield(editor.state.playfields.size() - 1)
 
@@ -69,11 +70,11 @@ func _on_add_playfield_pressed() -> void:
 func _on_remove_playfield_pressed() -> void:
 	if editor.state.selected_playfield_index < 0 or editor.state.selected_playfield_index >= editor.state.playfields.size():
 		return
-	var playfield_data = editor.state.playfields[editor.state.selected_playfield_index]
-	var playfield_id = playfield_data.get("id", "")
-	var node = playfield_data.get("node")
-	if node:
-		node.queue_free()
+	
+	var selected_pf = editor.state.playfields[editor.state.selected_playfield_index]
+	if selected_pf:
+		selected_pf.queue_free()
+	
 	editor.state.playfields.remove_at(editor.state.selected_playfield_index)
 	editor.state.selected_playfield_index = -1
 	refresh_playfields_list()
@@ -82,7 +83,7 @@ func _on_remove_playfield_pressed() -> void:
 # Selects a playfield when its node is clicked in the scene.
 func _on_playfield_clicked(playfield_node) -> void:
 	for i in editor.state.playfields.size():
-		if editor.state.playfields[i].get("node") == playfield_node:
+		if editor.state.playfields[i] == playfield_node:
 			_select_playfield(i)
 			break
 
@@ -98,14 +99,11 @@ func _on_playfield_size_changed(_value: float) -> void:
 		return
 	if editor.state.selected_playfield_index < 0 or editor.state.selected_playfield_index >= editor.state.playfields.size():
 		return
-	var playfield_data = editor.state.playfields[editor.state.selected_playfield_index]
-	var rect: Rect2 = playfield_data["rect"]
-	rect.size = Vector2(editor.playfield_width_spin.value, editor.playfield_height_spin.value)
-	playfield_data["rect"] = rect
-	editor.state.playfields[editor.state.selected_playfield_index] = playfield_data
-	var node = playfield_data.get("node")
-	if node:
-		node.set_playfield(playfield_data.get("id", ""), rect)
+	var current_playfield = editor.state.playfields[editor.state.selected_playfield_index]
+	current_playfield.rect = Rect2(current_playfield.position, Vector2(editor.playfield_width_spin.value, editor.playfield_height_spin.value))
+	current_playfield.set_playfield(current_playfield.id, current_playfield.rect)
+
+	editor.state.playfields[editor.state.selected_playfield_index] = current_playfield
 		
 # Updates the selected playfield position and refreshes its node.
 func _on_playfield_position_changed(_value: float) -> void:
@@ -113,14 +111,10 @@ func _on_playfield_position_changed(_value: float) -> void:
 		return
 	if editor.state.selected_playfield_index < 0 or editor.state.selected_playfield_index >= editor.state.playfields.size():
 		return
-	var playfield_data = editor.state.playfields[editor.state.selected_playfield_index]
-	var rect: Rect2 = playfield_data["rect"]
-	rect.position = Vector2(editor.playfield_pos_x_spin.value, editor.playfield_pos_y_spin.value)
-	playfield_data["rect"] = rect
-	editor.state.playfields[editor.state.selected_playfield_index] = playfield_data
-	var node = playfield_data.get("node")
-	if node:
-		node.set_playfield(playfield_data.get("id", ""), rect)
+	var current_playfield = editor.state.playfields[editor.state.selected_playfield_index]
+	current_playfield.rect.position = Vector2(editor.playfield_pos_x_spin.value, editor.playfield_pos_y_spin.value)
+	current_playfield.set_playfield(current_playfield.id, current_playfield.rect)
+	editor.state.playfields[editor.state.selected_playfield_index] = current_playfield
 		
 func clear_playfield_inspector() -> void:
 	editor._set_ui_suppressed(true)
@@ -132,10 +126,6 @@ func clear_playfield_inspector() -> void:
 
 func recalculate_playfield_id_counter() -> void:
 	var highest = 0
-	for playfield_data in editor.state.playfields:
-		var playfield_id = playfield_data.get("id", "")
-		if playfield_id.begins_with("playfield_"):
-			var suffix = playfield_id.substr(5)
-			if suffix.is_valid_int():
-				highest = max(highest, int(suffix))
+	for pf in editor.state.playfields:
+		highest = max(highest, int(pf.id))
 	editor.state.playfield_id_counter = max(highest + 1, editor.state.playfields.size() + 1)
