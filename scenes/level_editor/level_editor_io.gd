@@ -126,11 +126,11 @@ func _read_level_config(config: ConfigFile) -> void:
 		var marker = editor.ProjectileMarkerScene.instantiate()
 		editor.projectiles_layer.add_child(marker)
 		marker.clicked.connect(editor._on_projectile_marker_clicked)
-		marker.time_ms = editor.state.current_time_ms
+		marker.time_ms = time_ms
 		marker.global_position = pos
 		marker.pos = pos
-		marker.speed = editor.projectile_speed_spin.value
-		marker.angle = editor.projectile_angle_spin.value
+		marker.speed = speed
+		marker.angle = angle_deg
 		marker.pattern = pattern
 		marker.zone_id = zone_id
 		marker.type = "basic" # TODO
