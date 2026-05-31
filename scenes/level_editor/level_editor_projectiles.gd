@@ -166,14 +166,22 @@ func _on_projectile_pattern_selected(index: int) -> void:
 func _on_projectile_area_selected(index: int) -> void:
 	if editor.state.suppress_ui:
 		return
-	if editor.state.selected_projectile_index < 0 or editor.state.selected_projectile_index >= editor.state.projectiles.size():
+
+	if editor.state.selected_projectile_index < 0 \
+	or editor.state.selected_projectile_index >= editor.state.projectiles.size():
 		return
+
 	var proj = editor.state.projectiles[editor.state.selected_projectile_index]
+
 	if index == 0:
 		proj.zone_id = 0
 	else:
-		proj.zone_id = editor.projectile_area_option.get_item_text(index)
+		proj.zone_id = int(
+			editor.projectile_area_option.get_item_text(index)
+		)
+
 		editor.zones_component.highlight_zone_for_area(proj.zone_id)
+
 	update_projectile_marker(proj)
 
 # Rebuilds the projectile list UI and restores the previous selection when possible.

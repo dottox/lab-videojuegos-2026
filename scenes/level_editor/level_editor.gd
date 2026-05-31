@@ -507,8 +507,8 @@ func _update_area_options() -> void:
 	for zone in state.zones:
 		projectile_area_option.add_item(str(zone.id))
 	if selected_zone_id != null:
-		for i in projectile_area_option.item_count:
-			if projectile_area_option.get_item_text(i) == selected_zone_id:
+		for i in range(projectile_area_option.item_count):
+			if projectile_area_option.get_item_text(i) == str(selected_zone_id):
 				projectile_area_option.select(i)
 				return
 	projectile_area_option.select(0)
