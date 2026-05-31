@@ -3,6 +3,7 @@ extends Node2D
 const LevelEditorState = preload("res://scenes/level_editor/level_editor_state.gd")
 const LevelEditorZones = preload("res://scenes/level_editor/level_editor_zones.gd")
 const LevelEditorProjectiles = preload("res://scenes/level_editor/level_editor_projectiles.gd")
+const LevelEditorPhases = preload("res://scenes/level_editor/level_editor_phases.gd")
 const LevelEditorIO = preload("res://scenes/level_editor/level_editor_io.gd")
 
 const LevelLoader = preload("res://scenes/level_loader/level_loader.gd")
@@ -18,8 +19,9 @@ const PROJECTILE_ENUM_PATHS: Array[String] = [
 const PLAYFIELD_ENUM_PATHS: Array[String] = [
 	"res://scenes/playfield/playfield.gd"
 ]
-
 const PROJECTILE_PATTERN_ENUM_PATH: String = "res://scenes/projectiles/bullet/bullet_patterns.gd"
+const PHASE_TYPES_ENUM_PATH: String = "res://scenes/phase/phase.gd"
+
 const PROJECTILE_PREVIEW_WINDOW_MS := 2000
 const ZONE_DEFAULT_MARGIN := 20.0
 const ZONES_PER_ROW := 2
@@ -52,13 +54,19 @@ const PREVIEW_EXPORT_PATH := "res://level_preview.cfg"
 @onready var timeline_slider: HSlider = $CanvasLayer/UI/Root/TopBar/TimelineSlider
 @onready var time_label: Label = $CanvasLayer/UI/Root/TopBar/TimeLabel
 
-@onready var playfield_list: ItemList = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldList
-@onready var add_playfield_button: Button = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons/AddPlayfieldButton
-@onready var remove_playfield_button: Button = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons/RemovePlayfieldButton
-@onready var playfield_pos_x_spin: SpinBox = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldPosXSpin
-@onready var playfield_pos_y_spin: SpinBox = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldPosYSpin
-@onready var playfield_width_spin: SpinBox = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldWidthSpin
-@onready var playfield_height_spin: SpinBox = $CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldHeightSpin
+@onready var playfield_list: ItemList = $CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldList
+@onready var add_playfield_button: Button = $CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons/AddPlayfieldButton
+@onready var remove_playfield_button: Button = $CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons/RemovePlayfieldButton
+@onready var playfield_pos_x_spin: SpinBox = $CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldPosXSpin
+@onready var playfield_pos_y_spin: SpinBox = $CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldPosYSpin
+@onready var playfield_width_spin: SpinBox = $CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldWidthSpin
+@onready var playfield_height_spin: SpinBox = $CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid/PlayfieldHeightSpin
+
+@onready var phase_list: ItemList = $CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseList
+@onready var add_phase_button: Button = $CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseButtons/AddPhaseButton
+@onready var remove_phase_button: Button = $CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseButtons/RemovePhaseButton
+@onready var phase_type_option: OptionButton = $CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseGrid/PhaseTypeOption
+@onready var phase_time_spin: SpinBox = $CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseGrid/PhaseTimeSpin
 
 @onready var zone_list: ItemList = $CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneList
 @onready var add_zone_button: Button = $CanvasLayer/UI/Root/Content/ZonesPanel/ZonesVBox/ZoneButtons/AddZoneButton
@@ -95,6 +103,7 @@ var live_preview
 var zones_component: LevelEditorZones
 var projectiles_component: LevelEditorProjectiles
 var playfields_component: LevelEditorPlayfields
+var phases_component: LevelEditorPhases
 var io_component: LevelEditorIO
 var level_loader_component: LevelLoader
 
@@ -102,6 +111,9 @@ var level_loader_component: LevelLoader
 func _ready() -> void:
 	playfields_component = LevelEditorPlayfields.new()
 	playfields_component.initialize(self)
+	
+	phases_component = LevelEditorPhases.new()
+	phases_component.initialize(self)
 	
 	zones_component = LevelEditorZones.new()
 	zones_component.initialize(self)
@@ -220,6 +232,8 @@ func _load_enums() -> void:
 	if state.playfield_types.is_empty():
 		state.playfield_types = ["normal"]
 	state.playfield_type = state.playfield_types[0]
+	
+	state.phase_types = _load_enum_values(PHASE_TYPES_ENUM_PATH, "TYPES")
 
 # Intenta leer un enum desde un script y devolver sus claves ordenadas.
 func _load_enum_values(path: String, enum_type_name: String) -> Array:
@@ -253,6 +267,11 @@ func _setup_option_buttons() -> void:
 	for option in state.projectile_patterns:
 		projectile_pattern_option.add_item(option)
 	projectile_pattern_option.select(0)
+	
+	phase_type_option.clear()
+	for option in state.phase_types:
+		phase_type_option.add_item(option)
+	phase_type_option.select(0)
 
 	_update_area_options()
 
@@ -277,6 +296,12 @@ func _setup_ui() -> void:
 	playfield_pos_y_spin.value_changed.connect(playfields_component._on_playfield_position_changed)
 	playfield_width_spin.value_changed.connect(playfields_component._on_playfield_size_changed)
 	playfield_height_spin.value_changed.connect(playfields_component._on_playfield_size_changed)
+
+	phase_list.item_selected.connect(phases_component._on_phase_list_selected)
+	add_phase_button.pressed.connect(phases_component._on_add_phase_pressed)
+	remove_phase_button.pressed.connect(phases_component._on_remove_phase_pressed)
+	phase_type_option.item_selected.connect(phases_component._on_phase_type_selected)
+	phase_time_spin.value_changed.connect(phases_component._on_phase_time_changed)
 
 	add_zone_button.pressed.connect(zones_component._on_add_zone_pressed)
 	remove_zone_button.pressed.connect(zones_component._on_remove_zone_pressed)
