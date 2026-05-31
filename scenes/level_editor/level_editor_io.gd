@@ -73,6 +73,12 @@ func _write_level_config(config: ConfigFile) -> void:
 		config.set_value(section, "type", proj.type)
 		config.set_value(section, "pattern", proj.pattern)
 		config.set_value(section, "zone_id", proj.zone_id)
+		
+	for i in editor.state.phases.size():
+		var ph: Phase = editor.state.phases[i]
+		var section := "phases_%d" % i
+		config.set_value(section, "time_ms", int(ph.time))
+		config.set_value(section, "type", ph.type)
 
 # Restores editor state from a ConfigFile.
 func _read_level_config(config: ConfigFile) -> void:
@@ -140,6 +146,19 @@ func _read_level_config(config: ConfigFile) -> void:
 
 	editor.projectiles_component.refresh_projectile_list()
 	editor.projectiles_component.update_projectile_visibility()
+	
+	editor.phases_component.clear_phases()
+	var phase_sections := _sorted_sections_with_prefix(config, "phases_")
+	for section in phase_sections:
+		var time_ms: int = int(config.get_value(section, "time_ms", 0))
+		var type: String = config.get_value(section, "type", "bullet_hell")
+		
+		var phase: Phase = Phase.new()
+		phase.time = time_ms
+		phase.type = type
+		
+		editor.state.phases.append(phase)
+	editor.phases_component.refresh_phases_list()
 
 	_load_music_from_data()
 	editor._update_timeline_range()

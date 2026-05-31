@@ -102,78 +102,130 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="PlayfieldPanel" type="PanelContainer" parent="CanvasLayer/UI/Root/Content" unique_id=4866635]
+[node name="PPSeparator" type="VBoxContainer" parent="CanvasLayer/UI/Root/Content" unique_id=940651202]
+layout_mode = 2
+
+[node name="PlayfieldPanel" type="PanelContainer" parent="CanvasLayer/UI/Root/Content/PPSeparator" unique_id=4866635]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 1.4
 
-[node name="PlayfieldVBox" type="VBoxContainer" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel" unique_id=823142597]
+[node name="PlayfieldVBox" type="VBoxContainer" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel" unique_id=823142597]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="PlayfieldLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox" unique_id=2001411863]
+[node name="PlayfieldLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox" unique_id=2001411863]
 layout_mode = 2
 text = "Playfield"
 
-[node name="PlayfieldList" type="ItemList" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox" unique_id=2114909527]
+[node name="PlayfieldList" type="ItemList" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox" unique_id=2114909527]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="PlayfieldButtons" type="HBoxContainer" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox" unique_id=1350918000]
+[node name="PlayfieldButtons" type="HBoxContainer" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox" unique_id=1350918000]
 layout_mode = 2
 
-[node name="AddPlayfieldButton" type="Button" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons" unique_id=2078055477]
+[node name="AddPlayfieldButton" type="Button" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons" unique_id=2078055477]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Add"
 
-[node name="RemovePlayfieldButton" type="Button" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons" unique_id=1703117074]
+[node name="RemovePlayfieldButton" type="Button" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldButtons" unique_id=1703117074]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Remove"
 
-[node name="PlayfieldGrid" type="GridContainer" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox" unique_id=416613156]
+[node name="PlayfieldGrid" type="GridContainer" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox" unique_id=416613156]
 layout_mode = 2
 columns = 2
 
-[node name="PlayfieldPosXLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=1398619718]
+[node name="PlayfieldPosXLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=1398619718]
 layout_mode = 2
 text = "Pos X"
 
-[node name="PlayfieldPosXSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2027678826]
+[node name="PlayfieldPosXSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2027678826]
 layout_mode = 2
 min_value = -2000.0
 max_value = 2000.0
 
-[node name="PlayfieldPosYLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2020152387]
+[node name="PlayfieldPosYLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2020152387]
 layout_mode = 2
 text = "Pos Y"
 
-[node name="PlayfieldPosYSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=1620306901]
+[node name="PlayfieldPosYSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=1620306901]
 layout_mode = 2
 min_value = -2000.0
 max_value = 2000.0
 
-[node name="PlayfieldWidthLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2090581680]
+[node name="PlayfieldWidthLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=2090581680]
 layout_mode = 2
 text = "Width"
 
-[node name="PlayfieldWidthSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=169055156]
+[node name="PlayfieldWidthSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=169055156]
 layout_mode = 2
 min_value = 10.0
 max_value = 2000.0
 value = 500.0
 
-[node name="PlayfieldHeightLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=13620853]
+[node name="PlayfieldHeightLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=13620853]
 layout_mode = 2
 text = "Height"
 
-[node name="PlayfieldHeightSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=103750750]
+[node name="PlayfieldHeightSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PPSeparator/PlayfieldPanel/PlayfieldVBox/PlayfieldGrid" unique_id=103750750]
 layout_mode = 2
 min_value = 10.0
 max_value = 2000.0
 value = 250.0
+
+[node name="Phase" type="PanelContainer" parent="CanvasLayer/UI/Root/Content/PPSeparator" unique_id=1530062098]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PhaseVBox" type="VBoxContainer" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase" unique_id=1195138109]
+layout_mode = 2
+
+[node name="PhaseLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox" unique_id=1509595444]
+layout_mode = 2
+text = "Phase"
+
+[node name="PhaseList" type="ItemList" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox" unique_id=149751141]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PhaseButtons" type="HBoxContainer" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox" unique_id=1925065496]
+layout_mode = 2
+
+[node name="AddPhaseButton" type="Button" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseButtons" unique_id=1276072021]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add"
+
+[node name="RemovePhaseButton" type="Button" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseButtons" unique_id=207836555]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Remove"
+
+[node name="PhaseGrid" type="GridContainer" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox" unique_id=319229273]
+layout_mode = 2
+columns = 2
+
+[node name="PhaseTypeLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseGrid" unique_id=770780165]
+layout_mode = 2
+text = "Phase"
+
+[node name="PhaseTypeOption" type="OptionButton" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseGrid" unique_id=244169538]
+layout_mode = 2
+
+[node name="PhaseTimeLabel" type="Label" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseGrid" unique_id=1011151984]
+layout_mode = 2
+text = "Time"
+
+[node name="PhaseTimeSpin" type="SpinBox" parent="CanvasLayer/UI/Root/Content/PPSeparator/Phase/PhaseVBox/PhaseGrid" unique_id=779533]
+layout_mode = 2
+min_value = -2000.0
+max_value = 2000.0
 
 [node name="ZonesPanel" type="PanelContainer" parent="CanvasLayer/UI/Root/Content" unique_id=632459669]
 custom_minimum_size = Vector2(250, 0)
