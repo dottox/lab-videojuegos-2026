@@ -28,3 +28,4 @@ Abre `scenes/editor/level_editor.tscn` en Godot y ejecútalo como escena. Desde 
 ### Notas
 
 - Eliminar la compilación anterior antes de generar una nueva.
+- Se necesita de levantar un server para correr el programa. (LiveServer de VsCode funciona perfectamente)
