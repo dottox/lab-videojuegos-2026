@@ -138,8 +138,7 @@ func parse_level_cfg(path: String) -> void:
 		if section.begins_with("playfields_"):
 			var playfield: Playfield = playfield_scene.instantiate()
 			var data := _config_section_to_dict(cfg, section)
-			PlayfieldLayer.add_child(playfield)
-			playfield.set_playfield(data.get("id", ""), _array_to_rect2(data.get("rect", [0, 0, 0, 0]), Rect2()))
+			playfield.set_playfield(data.get("id", ""), _array_to_rect2(data.get("rect")))
 			playfield_configs.append(playfield)
 
 		elif section.begins_with("zones_"):
@@ -181,21 +180,12 @@ func apply_level_config() -> void:
 	
 	if playfield_configs.is_empty():
 		return
-	var playfield_data := playfield_configs[next_playfield_index]
-	var playfield: Playfield = playfield_scene.instantiate()
+	var playfield_data
+	var playfield: Playfield
 	
-	PlayfieldLayer.add_child(playfield)
-	playfield.set_playfield(playfield_data["id"], _array_to_rect2(playfield_data["rect"]))
-	next_playfield_index += 1
-	
-	player.playfield = playfield
-	player.global_position = playfield.get_center()
-
 	while next_playfield_index < playfield_configs.size():
 		playfield_data = playfield_configs[next_playfield_index]
-		playfield = playfield_scene.instantiate()
-		PlayfieldLayer.add_child(playfield)
-		playfield.set_playfield(playfield_data["id"], _array_to_rect2(playfield_data["rect"]))
+		PlayfieldLayer.add_child(playfield_data)
 		next_playfield_index += 1
 
 		

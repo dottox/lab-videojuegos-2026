@@ -51,7 +51,7 @@ func get_center() -> Vector2:
 	return rect.position + rect.size / 2.0
 	
 func _refresh() -> void:
-	if collision_shape == null:
+	if not is_inside_tree() or collision_shape == null:
 		return
 
 	var shape := collision_shape.shape
