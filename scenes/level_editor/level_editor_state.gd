@@ -7,7 +7,7 @@ var playfield_types: Array[String] = []
 var phase_types: Array[String] = []
 
 var zones: Array[ZoneArea] = []
-var projectiles: Array[Bullet] = []
+var projectiles: Array[Projectile] = []
 var playfields: Array[Playfield] = []
 var phases: Array[Phase] = []
 

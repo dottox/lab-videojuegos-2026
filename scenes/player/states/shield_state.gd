@@ -20,6 +20,8 @@ func enter(player):
 	player.add_child(shield)
 	shield.position = Vector2.ZERO
 	shield.set_sprite_opacity(1.0)
+	if not shield.blocked.is_connected(player._on_shield_blocked):
+		shield.blocked.connect(player._on_shield_blocked)
 
 func exit(player):
 	if shield:
@@ -27,6 +29,10 @@ func exit(player):
 		shield = null
 
 func physics_update(player, delta):
+	player.velocity = Vector2.ZERO
+	player.debug_dash_dir = Vector2.ZERO
+	if player.playfield:
+		player.global_position = player.playfield.get_center()
 
 	# cooldown
 	if shield_cooldown > 0:
@@ -47,6 +53,7 @@ func start_shielding():
 
 func update_shield(delta):
 	var active: bool = shield_cooldown > 0
+	shield.set_blocking(active)
 
 	if active:
 		shield_anim_t = 1

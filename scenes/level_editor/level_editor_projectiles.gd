@@ -20,7 +20,7 @@ func create_projectile_at(position: Vector2) -> void:
 	marker.angle = editor.projectile_angle_spin.value
 	marker.pattern = "single"
 	marker.zone_id = 0
-	marker.type = "basic"
+	marker.type = "bullet"
 	
 	editor.state.projectiles.append(marker)
 	update_projectile_marker(marker)
@@ -68,7 +68,7 @@ func select_projectile(index: int) -> void:
 	editor._set_option_button_value(editor.projectile_type_option, proj_at_current_index.type)
 	editor._set_option_button_value(editor.projectile_pattern_option, proj_at_current_index.pattern)
 	var zone_id = proj_at_current_index.zone_id
-	if zone_id == null:
+	if zone_id == 0:
 		editor.projectile_area_option.select(0)
 	else:
 		editor._set_option_button_value(editor.projectile_area_option, str(zone_id))
@@ -196,8 +196,8 @@ func refresh_projectile_list() -> void:
 	update_projectile_visibility()
 
 # Applies marker-specific state such as area spawn mode and angle.
-func update_projectile_marker(proj: Bullet) -> void:
-	proj.set_spawn_in_area(proj.zone_id != null)
+func update_projectile_marker(proj) -> void:
+	proj.set_spawn_in_area(proj.zone_id != 0)
 	proj.set_angle(proj.angle)
 
 # Frees all projectile nodes and clears projectile state.

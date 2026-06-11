@@ -7,7 +7,7 @@ const PATTERNS := {
 }
 
 
-static func spawn(pattern_name: String, loader: LevelLoader, bullet: Bullet) -> void:
+static func spawn(pattern_name: String, loader: LevelLoader, bullet: Projectile) -> void:
 	match pattern_name:
 		"single":
 			single(loader, bullet)
@@ -18,14 +18,14 @@ static func spawn(pattern_name: String, loader: LevelLoader, bullet: Bullet) -> 
 			single(loader, bullet)
 
 
-static func single(loader: LevelLoader, b: Bullet) -> void:
+static func single(loader: LevelLoader, b: Projectile) -> void:
 	var size := loader.bullet_size
 	var color := Color.RED
 
 	loader.spawn_bullet(b.pos, Vector2.RIGHT.rotated(deg_to_rad(b.angle)) * b.speed, size, color)
 
 
-static func circle(loader: LevelLoader, b: Bullet) -> void:
+static func circle(loader: LevelLoader, b: Projectile) -> void:
 	var count := 8
 	var size := loader.bullet_size
 	var color := Color.RED

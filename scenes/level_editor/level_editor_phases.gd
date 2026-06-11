@@ -38,12 +38,12 @@ func _on_add_phase_pressed() -> void:
 	editor.state.phase_id_counter += 1
 	
 	var new_phase = Phase.new()
-	new_phase.type = "bullet_hell"
+	new_phase.type = "bullet_hell_no_rhythm"
 	new_phase.time = editor.phase_time_spin.value
 	editor.state.phases.append(new_phase)
 	
 	refresh_phases_list()
-	_select_phase(editor.state.playfields.size() - 1)
+	_select_phase(editor.state.phases.size() - 1)
 	
 func _on_remove_phase_pressed() -> void:
 	if editor.state.selected_phase_index < 0 or editor.state.selected_phase_index >= editor.state.phases.size():
@@ -63,12 +63,13 @@ func refresh_phases_list() -> void:
 		editor.phase_list.add_item("%s @ %d" % [ph.type,ph.time])
 	if previous >= 0 and previous < editor.state.phases.size():
 		editor.phase_list.select(previous)
+	editor._update_timeline_range()
 		
 func _on_phase_type_selected(index: int) -> void:
 	if editor.state.selected_phase_index < 0 or editor.state.selected_phase_index >= editor.state.phases.size():
 		return
 	var current_phase = editor.state.phases[editor.state.selected_phase_index]
-	current_phase.type = editor.phase_type_option.get_item_text(index)
+	current_phase.type = Phase.normalize_type(editor.phase_type_option.get_item_text(index))
 	refresh_phases_list()
 
 func _on_phase_time_changed(value: int) -> void:

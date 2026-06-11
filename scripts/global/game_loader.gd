@@ -6,6 +6,7 @@ var common_assets = {
 	"player": "res://scenes/player/player.tscn",
 	"playfield": "res://scenes/playfield/playfield.tscn",
 	"bullet": "res://scenes/projectiles/bullet/bullet.tscn",
+	"rhythm_note": "res://scenes/projectiles/rhythm_note/rhythm_note.tscn",
 	"rythm_bar": "res://scenes/ui/progress_bar/progress_bar.tscn",
 	"main_menu": "res://scenes/ui/menus/main_menu.tscn",
 	"level_selector": "res://scenes/ui/menus/level_selector.tscn",
@@ -16,12 +17,21 @@ var common_assets = {
 }
 
 var loaded_resources = {}
+var sync_asset_keys := {
+	"rhythm_note": true,
+}
 	
 func start_background_loading():
 	print("[game_loader]: Cargando common assets...")
 	
 	for key in common_assets:
 		var ca = common_assets[key]
+		if ca == "":
+			continue
+		if sync_asset_keys.has(key):
+			loaded_resources[key] = load(ca)
+			print("[game_loader]: Asset " + ca + " cargado.")
+			continue
 		ResourceLoader.load_threaded_request(ca)
 		print("[game_loader]: Asset " + ca + " cargado.")
 		
@@ -31,6 +41,8 @@ func start_background_loading():
 func _process(_delta):
 	var all_done = true
 	for key in common_assets:
+		if loaded_resources.has(key) or common_assets[key] == "":
+			continue
 		var status = ResourceLoader.load_threaded_get_status(common_assets[key])
 		if status == ResourceLoader.THREAD_LOAD_LOADED:
 			loaded_resources[key] = ResourceLoader.load_threaded_get(common_assets[key])

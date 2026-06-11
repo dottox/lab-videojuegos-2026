@@ -64,13 +64,13 @@ func _write_level_config(config: ConfigFile) -> void:
 	# Projectiles in a stable order.
 	_sort_projectile_list_by_time()
 	for i in editor.state.projectiles.size():
-		var proj: Bullet = editor.state.projectiles[i]
+		var proj: Projectile = editor.state.projectiles[i]
 		var section := "projectiles_%d" % i
 		config.set_value(section, "time_ms", int(proj.time_ms))
 		config.set_value(section, "pos", _vector2_to_array(proj.pos))
 		config.set_value(section, "speed", float(proj.speed))
 		config.set_value(section, "angle_deg", float(proj.angle))
-		config.set_value(section, "type", proj.type)
+		config.set_value(section, "type", Projectile.normalize_type(proj.type))
 		config.set_value(section, "pattern", proj.pattern)
 		config.set_value(section, "zone_id", proj.zone_id)
 		
@@ -78,7 +78,7 @@ func _write_level_config(config: ConfigFile) -> void:
 		var ph: Phase = editor.state.phases[i]
 		var section := "phases_%d" % i
 		config.set_value(section, "time_ms", int(ph.time))
-		config.set_value(section, "type", ph.type)
+		config.set_value(section, "type", Phase.normalize_type(ph.type))
 
 # Restores editor state from a ConfigFile.
 func _read_level_config(config: ConfigFile) -> void:
@@ -120,12 +120,15 @@ func _read_level_config(config: ConfigFile) -> void:
 
 	editor.projectiles_component.clear_projectiles()
 	var projectile_sections := _sorted_sections_with_prefix(config, "projectiles_")
+	projectile_sections.sort_custom(func(a: String, b: String) -> bool:
+		return int(config.get_value(a, "time_ms", 0)) < int(config.get_value(b, "time_ms", 0))
+	)
 	for section in projectile_sections:
 		var time_ms := int(config.get_value(section, "time_ms", 0))
 		var pos := _array_to_vector2(config.get_value(section, "pos", [0, 0]), Vector2.ZERO)
 		var speed := float(config.get_value(section, "speed", 0.0))
 		var angle_deg := float(config.get_value(section, "angle_deg", 0.0))
-		var projectile_type := str(config.get_value(section, "type", editor.state.projectile_types[0] if editor.state.projectile_types.size() > 0 else "basic"))
+		var projectile_type := str(config.get_value(section, "type", editor.state.projectile_types[0] if editor.state.projectile_types.size() > 0 else "bullet"))
 		var pattern = config.get_value(section, "pattern", "")
 		var zone_id = config.get_value(section, "zone_id", 0)
 
@@ -139,7 +142,7 @@ func _read_level_config(config: ConfigFile) -> void:
 		marker.angle = angle_deg
 		marker.pattern = pattern
 		marker.zone_id = zone_id
-		marker.type = "basic" # TODO
+		marker.type = Projectile.normalize_type(projectile_type)
 		
 		editor.state.projectiles.append(marker)
 		editor.projectiles_component.update_projectile_marker(marker)
@@ -151,11 +154,11 @@ func _read_level_config(config: ConfigFile) -> void:
 	var phase_sections := _sorted_sections_with_prefix(config, "phases_")
 	for section in phase_sections:
 		var time_ms: int = int(config.get_value(section, "time_ms", 0))
-		var type: String = config.get_value(section, "type", "bullet_hell")
+		var type: String = config.get_value(section, "type", "bullet_hell_no_rhythm")
 		
 		var phase: Phase = Phase.new()
 		phase.time = time_ms
-		phase.type = type
+		phase.type = Phase.normalize_type(type)
 		
 		editor.state.phases.append(phase)
 	editor.phases_component.refresh_phases_list()

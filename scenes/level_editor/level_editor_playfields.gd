@@ -54,7 +54,7 @@ func _on_add_playfield_pressed() -> void:
 	editor.state.playfield_id_counter += 1
 	
 	var size = Vector2(editor.playfield_width_spin.value, editor.playfield_height_spin.value)
-	var position = Vector2(editor.playfield_pos_x_spin.value, editor.playfield_pos_y_spin.value)
+	var position = _get_centered_playfield_position(size)
 	var rect = Rect2(position, size)
 	
 	var new_node = editor.PlayfieldScene.instantiate()
@@ -65,6 +65,10 @@ func _on_add_playfield_pressed() -> void:
 	
 	refresh_playfields_list()
 	_select_playfield(editor.state.playfields.size() - 1)
+
+func _get_centered_playfield_position(size: Vector2) -> Vector2:
+	var viewport_rect := editor.get_viewport().get_visible_rect()
+	return viewport_rect.get_center() - size / 2.0
 
 # Removes the currently selected playfield and clears any projectile references to it.
 func _on_remove_playfield_pressed() -> void:
@@ -100,7 +104,7 @@ func _on_playfield_size_changed(_value: float) -> void:
 	if editor.state.selected_playfield_index < 0 or editor.state.selected_playfield_index >= editor.state.playfields.size():
 		return
 	var current_playfield = editor.state.playfields[editor.state.selected_playfield_index]
-	current_playfield.rect = Rect2(current_playfield.position, Vector2(editor.playfield_width_spin.value, editor.playfield_height_spin.value))
+	current_playfield.rect = Rect2(current_playfield.rect.position, Vector2(editor.playfield_width_spin.value, editor.playfield_height_spin.value))
 	current_playfield.set_playfield(current_playfield.id, current_playfield.rect)
 
 	editor.state.playfields[editor.state.selected_playfield_index] = current_playfield

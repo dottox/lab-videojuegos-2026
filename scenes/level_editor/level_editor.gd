@@ -13,9 +13,7 @@ const ZoneAreaScene := preload("res://scenes/zone/zone_area.tscn")
 const PlayfieldScene := preload("res://scenes/playfield/playfield.tscn")
 const LivePreviewScene := preload("res://scenes/level_loader/level_loader.tscn")
 
-const PROJECTILE_ENUM_PATHS: Array[String] = [
-	"res://scenes/projectiles/bullet/bullet.gd"
-]
+const PROJECTILE_TYPE_ENUM_PATH: String = "res://scenes/projectiles/projectile.gd"
 const PLAYFIELD_ENUM_PATHS: Array[String] = [
 	"res://scenes/playfield/playfield.gd"
 ]
@@ -31,6 +29,7 @@ const Z_INDEX_PLAYFIELD := 0
 const Z_INDEX_PROJECTILES := 10
 
 const PREVIEW_EXPORT_PATH := "res://level_preview.cfg"
+const PHASE_MAX_TIME_MS := 300000
 
 @onready var playfields_layer: Node2D = $PlayfieldsLayer
 @onready var zones_layer: Node2D = $ZonesLayer
@@ -193,15 +192,12 @@ func _select_projectile_close_to_mouse(max_radius: float = 64.0) -> void:
 func _move_selected_projectile_to_mouse() -> void:
 	if state.selected_projectile_index < 0 or state.selected_projectile_index >= state.projectiles.size():
 		return
-	var data = state.projectiles[state.selected_projectile_index]
+	var projectile = state.projectiles[state.selected_projectile_index]
 	var pos = get_global_mouse_position()
-	data["pos"] = pos
-	state.projectiles[state.selected_projectile_index] = data
+	projectile.pos = pos
+	projectile.global_position = pos
 	projectile_pos_x_spin.value = pos.x
 	projectile_pos_y_spin.value = pos.y
-	var node = data.get("node")
-	if node:
-		node.global_position = pos
 		
 # Define la prioridad visual de cada capa.
 func _setup_layers() -> void:
@@ -224,9 +220,9 @@ func _init_playfield() -> void:
 
 # Carga enums desde scripts para poblar los OptionButton.
 func _load_enums() -> void:
-	#state.projectile_types = _load_enum_values(PROJECTILE_ENUM_PATHS, PROJECTILE_TYPE_ENUM_NAMES)
+	state.projectile_types = _load_enum_values(PROJECTILE_TYPE_ENUM_PATH, "TYPES")
 	if state.projectile_types.is_empty():
-		state.projectile_types = ["basic"]
+		state.projectile_types = ["bullet"]
 	state.projectile_patterns = _load_enum_values(PROJECTILE_PATTERN_ENUM_PATH, "PATTERNS")
 	#state.playfield_types = _load_enum_values(PLAYFIELD_ENUM_PATHS, PLAYFIELD_TYPE_ENUM_NAMES)
 	if state.playfield_types.is_empty():
@@ -277,6 +273,8 @@ func _setup_option_buttons() -> void:
 
 # Conecta señales de UI con sus handlers.
 func _setup_ui() -> void:
+	phase_time_spin.max_value = PHASE_MAX_TIME_MS
+
 	exit_button.pressed.connect(_on_exit_button_pressed)
 	load_music_button.pressed.connect(_on_load_music_pressed)
 	play_button.pressed.connect(_on_play_pressed)
@@ -475,8 +473,11 @@ func _update_timeline_range() -> void:
 	var max_time = state.music_length_ms
 	for proj in state.projectiles:
 		max_time = max(max_time, proj.time_ms)
+	for phase in state.phases:
+		max_time = max(max_time, phase.time)
 	timeline_slider.max_value = max(max_time, 1000)
 	projectile_time_spin.max_value = timeline_slider.max_value
+	phase_time_spin.max_value = PHASE_MAX_TIME_MS
 	_set_current_time_ms(state.current_time_ms, false)
 
 # Escribe un estado simple en el label inferior.
@@ -529,7 +530,7 @@ func _refresh_projectile_list() -> void:
 	projectiles_component.refresh_projectile_list()
 
 # Wrapper para actualizar el marker visual de un proyectil.
-func _update_projectile_marker(proj: Bullet) -> void:
+func _update_projectile_marker(proj) -> void:
 	projectiles_component.update_projectile_marker(proj)
 
 # Wrapper para actualizar la visibilidad de proyectiles.

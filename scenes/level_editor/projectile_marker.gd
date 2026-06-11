@@ -1,4 +1,4 @@
-extends Bullet
+extends Projectile
 class_name ProjectileMarker
 
 signal clicked(marker)
@@ -7,9 +7,8 @@ var radius: float = 6.0
 var selected := false
 var spawn_in_area := false
 
-@onready var collision_shape: CollisionShape2D = $CollisionShape2D
-
 func _ready() -> void:
+	super._ready()
 	_refresh_shape()
 
 func _refresh_shape() -> void:
@@ -28,7 +27,7 @@ func set_spawn_in_area(value: bool) -> void:
 	spawn_in_area = value
 	queue_redraw()
 
-func set_angle(value: int) -> void:
+func set_angle(value: float) -> void:
 	angle = value
 	queue_redraw()
 

@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var target: Bullet = $".."
+@onready var target: Projectile = $".."
 
 
 func _draw():
