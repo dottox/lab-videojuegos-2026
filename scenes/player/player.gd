@@ -15,6 +15,7 @@ var is_dead := false
 var debug_dash_dir := Vector2.ZERO
 var debug_dash_length := 0.0
 
+
 #Variables relacionadas al state
 var current_state
 var current_mode := ""
@@ -38,12 +39,42 @@ func _ready():
 	_player_sprite_base_modulate = player_sprite.modulate
 	debug_layer.target = self
 	debug_layer.z_index = 999
-	add_to_group("player") #Defino un grupo 'player' para las colisiones
+	add_to_group("player")
+	if not GameLoader.debug_draw_toggled.is_connected(_on_debug_draw_toggled):
+		GameLoader.debug_draw_toggled.connect(_on_debug_draw_toggled)
 	set_mode("normal")
 	health_changed.emit(vida, max_vida)
 
 func _draw():
-	debug_normal_mode()
+	if not GameLoader.debug_draw_enabled:
+		return
+	if debug_dash_dir == Vector2.ZERO:
+		return
+
+	var final_point = debug_dash_dir * debug_dash_length
+	var half = get_half_size()
+	var debug_dash = Rect2(
+		final_point.x - half.x,
+		final_point.y - half.y,
+		half.x * 2,
+		half.y * 2
+	)
+
+	draw_rect(
+		debug_dash,
+		Color.CADET_BLUE
+	)
+
+	draw_line(
+		Vector2.ZERO,
+		final_point,
+		Color.RED,
+		2
+	)
+
+
+func _on_debug_draw_toggled(_enabled: bool) -> void:
+	queue_redraw()
 
 func _physics_process(delta):
 	if is_dead:
@@ -74,31 +105,7 @@ func set_mode(mode: String):
 			
 func get_half_size() -> Vector2:
 	return player_sprite.texture.get_size() * player_sprite.scale * 0.5
-	
-func debug_normal_mode():
-	if debug_dash_dir == Vector2.ZERO:
-		return
 
-	var final_point = debug_dash_dir * debug_dash_length
-	var half = get_half_size()
-	var debug_dash = Rect2(
-		final_point.x - half.x,
-		final_point.y - half.y,
-		half.x * 2,
-		half.y * 2
-	)
-	
-	draw_rect(
-		debug_dash,
-		Color.CADET_BLUE
-		)
-		
-	draw_line(
-		Vector2.ZERO,
-		final_point,
-		Color.RED,
-		2
-	)
 
 func get_bounds() -> Rect2:
 	var rect := player_shape.shape.get_rect()

@@ -29,9 +29,10 @@ static func circle(loader: LevelLoader, b: Projectile) -> void:
 	var count := 8
 	var size := loader.bullet_size
 	var color := Color.RED
+	var start_angle := deg_to_rad(b.angle)
 
 	for i in count:
-		var angle := TAU * float(i) / float(count)
+		var angle := start_angle + TAU * float(i) / float(count)
 		var direction := Vector2.RIGHT.rotated(angle)
 		loader.spawn_bullet(b.pos, direction * b.speed, size, color)
 

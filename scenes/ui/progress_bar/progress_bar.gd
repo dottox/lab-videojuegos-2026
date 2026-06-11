@@ -175,6 +175,17 @@ func get_note_spawn_data(config_pos: Vector2, speed: float) -> Dictionary:
 		"velocity": velocity,
 	}
 
+func get_note_travel_time_ms(config_pos: Vector2, speed: float) -> float:
+	var spawn_data := get_note_spawn_data(config_pos, speed)
+	var spawn_pos: Vector2 = spawn_data["pos"]
+	var velocity: Vector2 = spawn_data["velocity"]
+	var note_speed: float = velocity.length()
+	if note_speed <= 0.0:
+		return 0.0
+
+	var distance: float = abs(spawn_pos.x - _get_center_x())
+	return distance / note_speed * 1000.0
+
 func judge_hit() -> bool:
 	if not rhythm_active:
 		return false

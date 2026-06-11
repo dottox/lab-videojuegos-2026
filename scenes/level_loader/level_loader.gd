@@ -107,11 +107,11 @@ func load_level(level_path: String) -> void:
 	init_projectile_pools()
 	load_level_config(level_path)
 	apply_level_config()
-	_skip_projectiles_before_start_time()
 	
 	spawn_player()
 	init_screen_effects()
 	init_progress_bar()
+	_prepare_projectile_schedule()
 	_apply_initial_phase()
 
 	setup_level()
@@ -321,13 +321,33 @@ func apply_level_config() -> void:
 		next_playfield_index += 1
 
 		
+func _prepare_projectile_schedule() -> void:
+	projectile_configs.sort_custom(func(a, b): return _get_projectile_spawn_time_ms(a) < _get_projectile_spawn_time_ms(b))
+	_skip_projectiles_before_start_time()
+
+
 func _skip_projectiles_before_start_time() -> void:
-	while next_projectile_index < projectile_configs.size():
-		var projectile := projectile_configs[next_projectile_index]
-		var spawn_time := projectile.time_ms
-		if spawn_time >= start_time_ms:
-			break
-		next_projectile_index += 1
+	var remaining_projectiles: Array[Projectile] = []
+	for projectile in projectile_configs:
+		if _should_keep_projectile_after_start_time(projectile):
+			remaining_projectiles.append(projectile)
+
+	projectile_configs = remaining_projectiles
+	next_projectile_index = 0
+
+
+func _should_keep_projectile_after_start_time(projectile: Projectile) -> bool:
+	if Projectile.normalize_type(projectile.type) == "rhythm_note":
+		return projectile.time_ms >= start_time_ms
+
+	return _get_projectile_spawn_time_ms(projectile) >= start_time_ms
+
+
+func _get_projectile_spawn_time_ms(projectile: Projectile) -> float:
+	if Projectile.normalize_type(projectile.type) == "rhythm_note" and rythm_bar != null:
+		return float(projectile.time_ms) - rythm_bar.get_note_travel_time_ms(projectile.pos, projectile.speed)
+
+	return float(projectile.time_ms)
 
 func spawn_player() -> void:
 	entities.add_child(player)
@@ -455,7 +475,7 @@ func _resolve_music_path() -> String:
 func process_projectiles() -> void:
 	while next_projectile_index < projectile_configs.size():
 		var projectile := projectile_configs[next_projectile_index]
-		var spawn_time := float(projectile.time_ms) / 1000.0
+		var spawn_time := _get_projectile_spawn_time_ms(projectile) / 1000.0
 
 		if music_timer < spawn_time:
 			break
@@ -513,17 +533,18 @@ func _get_nearest_shield_spawn_anchor(config_pos: Vector2, rect: Rect2) -> Vecto
 
 
 func _spawn_rhythm_note_from_config(proj: Projectile) -> void:
-	if not rhythm_active:
-		push_warning("Skipping rhythm_note outside rhythm phase at %dms" % proj.time_ms)
-		return
-
 	var note := _get_projectile_from_pool("rhythm_note")
 	if note == null:
 		push_warning("Rhythm note projectile could not be spawned")
 		return
 
 	var spawn_data: Dictionary = rythm_bar.get_note_spawn_data(proj.pos, proj.speed)
-	note.activate(spawn_data["pos"], spawn_data["velocity"])
+	var spawn_time := _get_projectile_spawn_time_ms(proj) / 1000.0
+	var elapsed_since_spawn: float = max(music_timer - spawn_time, 0.0)
+	var base_spawn_pos: Vector2 = spawn_data["pos"]
+	var velocity: Vector2 = spawn_data["velocity"]
+	var spawn_pos := base_spawn_pos + velocity * elapsed_since_spawn
+	note.activate(spawn_pos, velocity)
 	rythm_bar.register_note(note)
 
 
