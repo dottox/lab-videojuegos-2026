@@ -5,6 +5,9 @@ class_name LevelLoader
 @onready var PlayfieldLayer: Node2D = $PlayfieldLayer
 @onready var music: AudioStreamPlayer2D = $AudioStreamPlayer2D
 
+#Variables relacionadas al editor
+var preview_start_time_ms: float = -1.0
+
 var player
 var playfield_scene
 var rythm_bar
@@ -308,6 +311,12 @@ func apply_level_config() -> void:
 	bpm = float(meta.get("bpm", bpm))
 	seconds_per_beat = 60.0 / bpm if bpm > 0.0 else 0.0
 	start_time_ms = int(meta.get("start_time_ms", 0))
+	start_time_ms = int(meta.get("start_time_ms", 0))
+
+	#Si se ejecuta a través de preview, que empiece desde el tiempo que estás editando.
+	if preview_start_time_ms >= 0:
+		start_time_ms = preview_start_time_ms
+	
 	music_timer = start_time_ms / 1000.0
 	
 	if playfield_configs.is_empty():
