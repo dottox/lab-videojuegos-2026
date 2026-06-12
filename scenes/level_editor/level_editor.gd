@@ -452,7 +452,7 @@ func _on_live_preview_pressed() -> void:
 	playfields_layer.visible = false
 
 	level_loader_component = LivePreviewScene.instantiate()
-	level_loader_component.start_time_ms = state.current_time_ms
+	level_loader_component.preview_start_time_ms = state.current_time_ms
 	live_preview_layer.add_child(level_loader_component)
 	level_loader_component.is_in_editor = true
 	level_loader_component.load_level(PREVIEW_EXPORT_PATH)
@@ -519,7 +519,6 @@ func _on_zone_clicked(zone_node) -> void:
 	
 func _on_playfield_clicked(playfield_node) -> void:
 	playfields_component._on_playfield_clicked(playfield_node)
-
 
 # Wrapper para limpiar el inspector del proyectil.
 func _clear_projectile_inspector() -> void:
