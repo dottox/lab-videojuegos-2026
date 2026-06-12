@@ -4,6 +4,7 @@ signal loading_finished
 signal debug_draw_toggled(enabled: bool)
 
 const DEBUG_TOGGLE_ACTION := "toggle_debug_draw"
+const PAUSE_ACTION := "pause_game"
 
 var common_assets = {
 	"player": "res://scenes/player/player.tscn",
@@ -15,7 +16,7 @@ var common_assets = {
 	"level_selector": "res://scenes/ui/menus/level_selector.tscn",
 	"level_editor": "res://scenes/level_editor/level_editor.tscn",
 	"level_loader": "res://scenes/level_loader/level_loader.tscn",
-	"opciones": "",
+	"opciones": "res://scenes/ui/menus/options_menu.tscn",
 	"creditos": "res://scenes/ui/menus/credits.tscn",
 }
 
@@ -28,6 +29,7 @@ var debug_draw_enabled := false
 
 func _ready() -> void:
 	_ensure_debug_toggle_action()
+	_ensure_pause_action()
 	set_process_unhandled_input(true)
 
 
@@ -49,14 +51,22 @@ func set_debug_draw_enabled(enabled: bool) -> void:
 
 
 func _ensure_debug_toggle_action() -> void:
-	if not InputMap.has_action(DEBUG_TOGGLE_ACTION):
-		InputMap.add_action(DEBUG_TOGGLE_ACTION)
+	_ensure_action_with_key(DEBUG_TOGGLE_ACTION, KEY_QUOTELEFT)
+
+
+func _ensure_pause_action() -> void:
+	_ensure_action_with_key(PAUSE_ACTION, KEY_ESCAPE)
+
+
+func _ensure_action_with_key(action_name: String, physical_keycode: Key) -> void:
+	if not InputMap.has_action(action_name):
+		InputMap.add_action(action_name)
 
 	var event := InputEventKey.new()
-	event.physical_keycode = KEY_QUOTELEFT
+	event.physical_keycode = physical_keycode
 
-	if not InputMap.action_has_event(DEBUG_TOGGLE_ACTION, event):
-		InputMap.action_add_event(DEBUG_TOGGLE_ACTION, event)
+	if not InputMap.action_has_event(action_name, event):
+		InputMap.action_add_event(action_name, event)
 	
 func start_background_loading():
 	print("[game_loader]: Cargando common assets...")

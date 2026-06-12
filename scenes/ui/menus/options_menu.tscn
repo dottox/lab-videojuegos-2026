@@ -1,0 +1,80 @@
+[gd_scene format=3 uid="uid://dmyjop12m8r0t"]
+
+[ext_resource type="Script" path="res://scenes/ui/menus/options_menu.gd" id="1_7y73w"]
+
+[node name="OptionsMenu" type="Control" unique_id=846214009]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7y73w")
+
+[node name="Background" type="ColorRect" parent="." unique_id=168123641]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.09, 0.1, 0.14, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=768234122]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="CenterContainer" unique_id=457823658]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Panel" unique_id=301256724]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer" unique_id=637512877]
+layout_mode = 2
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=219854112]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Opciones"
+horizontal_alignment = 1
+
+[node name="VolumeLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=384678112]
+layout_mode = 2
+text = "Volumen musica"
+horizontal_alignment = 1
+
+[node name="VolumeRow" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=537812946]
+custom_minimum_size = Vector2(360, 44)
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="VolumeSlider" type="HSlider" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeRow" unique_id=487365901]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+step = 1.0
+value = 100.0
+
+[node name="VolumePercentLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer/VolumeRow" unique_id=891237465]
+custom_minimum_size = Vector2(52, 0)
+layout_mode = 2
+text = "100%"
+vertical_alignment = 1
+
+[node name="BackButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=912367508]
+custom_minimum_size = Vector2(260, 44)
+layout_mode = 2
+text = "Volver"

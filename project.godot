@@ -23,6 +23,7 @@ buses/default_bus_layout="uid://bqkhi64time5"
 
 GameLoader="*uid://baqawd7ky0hwg"
 AudioAnalyzer="*uid://c6mnx5fpylcgy"
+GameSettings="*res://scripts/global/game_settings.gd"
 
 [input]
 

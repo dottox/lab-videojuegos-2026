@@ -67,14 +67,20 @@ var background_flash: ColorRect
 var low_health_filter: ColorRect
 var death_screen: CanvasLayer
 var death_score_label: Label
+var pause_canvas: CanvasLayer
+var pause_menu_panel: PanelContainer
+var pause_options_screen: Control
+var pause_resume_button: Button
 var last_background_beat := -1
 var background_flash_timer := 0.0
 var background_flash_time := 0.18
 var background_flash_alpha := 0.12
 var low_health_filter_alpha := 0.0
-var max_low_health_filter_alpha := 0.36
+var max_low_health_filter_alpha := 0.26
+var is_level_paused := false
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if level_path:
 		load_level(level_path)
 
@@ -85,11 +91,15 @@ func load_level(level_path: String) -> void:
 	last_background_beat = -1
 	background_flash_timer = 0.0
 	low_health_filter_alpha = 0.0
+	is_level_paused = false
+	get_tree().paused = false
 
 	GameLoader.start_background_loading()
 	await GameLoader.loading_finished
 	
+	entities.process_mode = Node.PROCESS_MODE_PAUSABLE
 	entities.z_index = 100
+	PlayfieldLayer.process_mode = Node.PROCESS_MODE_PAUSABLE
 	PlayfieldLayer.z_index = 10
 
 	bullet_scene = GameLoader.get_asset("bullet")
@@ -111,6 +121,7 @@ func load_level(level_path: String) -> void:
 	spawn_player()
 	init_screen_effects()
 	init_progress_bar()
+	_create_pause_overlay()
 	_prepare_projectile_schedule()
 	_apply_initial_phase()
 
@@ -549,6 +560,9 @@ func _spawn_rhythm_note_from_config(proj: Projectile) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if is_level_paused:
+		return
+
 	music_timer = music.get_playback_position()
 	_update_screen_effects(delta)
 
@@ -566,6 +580,143 @@ func _physics_process(delta: float) -> void:
 			_add_score(rhythm_hit_score)
 
 	process_projectiles()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.echo:
+		return
+
+	if event.is_action_pressed(GameLoader.PAUSE_ACTION):
+		if game_over or is_in_editor:
+			return
+
+		if is_level_paused:
+			if pause_options_screen != null and is_instance_valid(pause_options_screen) and pause_options_screen.visible:
+				_show_pause_main_menu()
+			else:
+				_resume_level()
+		else:
+			_pause_level()
+
+		get_viewport().set_input_as_handled()
+
+
+func _create_pause_overlay() -> void:
+	if pause_canvas != null and is_instance_valid(pause_canvas):
+		return
+
+	pause_canvas = CanvasLayer.new()
+	pause_canvas.name = "PauseMenu"
+	pause_canvas.layer = 20
+	pause_canvas.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	pause_canvas.visible = false
+	add_child(pause_canvas)
+
+	var overlay := ColorRect.new()
+	overlay.color = Color(0.0, 0.0, 0.0, 0.54)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	_make_full_screen_rect(overlay)
+	pause_canvas.add_child(overlay)
+
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pause_canvas.add_child(center)
+
+	pause_menu_panel = PanelContainer.new()
+	pause_menu_panel.custom_minimum_size = Vector2(320, 260)
+	center.add_child(pause_menu_panel)
+
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 28)
+	margin.add_theme_constant_override("margin_top", 24)
+	margin.add_theme_constant_override("margin_right", 28)
+	margin.add_theme_constant_override("margin_bottom", 24)
+	pause_menu_panel.add_child(margin)
+
+	var layout := VBoxContainer.new()
+	layout.alignment = BoxContainer.ALIGNMENT_CENTER
+	layout.add_theme_constant_override("separation", 14)
+	margin.add_child(layout)
+
+	var title := Label.new()
+	title.text = "Pausa"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 36)
+	layout.add_child(title)
+
+	pause_resume_button = Button.new()
+	pause_resume_button.text = "Reanudar"
+	pause_resume_button.custom_minimum_size = Vector2(240, 44)
+	pause_resume_button.pressed.connect(_resume_level)
+	layout.add_child(pause_resume_button)
+
+	var options_button := Button.new()
+	options_button.text = "Opciones"
+	options_button.custom_minimum_size = Vector2(240, 44)
+	options_button.pressed.connect(_show_pause_options)
+	layout.add_child(options_button)
+
+	var back_to_menu_button := Button.new()
+	back_to_menu_button.text = "Volver al menu"
+	back_to_menu_button.custom_minimum_size = Vector2(240, 44)
+	back_to_menu_button.pressed.connect(_on_pause_back_to_menu_pressed)
+	layout.add_child(back_to_menu_button)
+
+
+func _pause_level() -> void:
+	is_level_paused = true
+	music.stream_paused = true
+	_show_pause_main_menu()
+	get_tree().paused = true
+
+
+func _resume_level() -> void:
+	get_tree().paused = false
+	is_level_paused = false
+	music.stream_paused = false
+	if pause_canvas != null and is_instance_valid(pause_canvas):
+		pause_canvas.visible = false
+
+
+func _show_pause_main_menu() -> void:
+	if pause_canvas == null or not is_instance_valid(pause_canvas):
+		_create_pause_overlay()
+
+	pause_canvas.visible = true
+	if pause_menu_panel != null and is_instance_valid(pause_menu_panel):
+		pause_menu_panel.visible = true
+
+	if pause_options_screen != null and is_instance_valid(pause_options_screen):
+		pause_options_screen.visible = false
+
+	if pause_resume_button != null and is_instance_valid(pause_resume_button):
+		pause_resume_button.grab_focus()
+
+
+func _show_pause_options() -> void:
+	if pause_canvas == null or not is_instance_valid(pause_canvas):
+		_create_pause_overlay()
+
+	if pause_options_screen == null or not is_instance_valid(pause_options_screen):
+		var options_scene: PackedScene = GameLoader.get_asset("opciones")
+		if options_scene == null:
+			push_warning("No se pudo abrir Opciones desde pausa")
+			return
+
+		pause_options_screen = options_scene.instantiate()
+		pause_options_screen.call("set_return_to_main_menu_on_back", false)
+		pause_options_screen.connect("back_requested", _show_pause_main_menu)
+		pause_canvas.add_child(pause_options_screen)
+
+	pause_menu_panel.visible = false
+	pause_options_screen.visible = true
+
+
+func _on_pause_back_to_menu_pressed() -> void:
+	get_tree().paused = false
+	is_level_paused = false
+	music.stream_paused = false
+	GameLoader.load_scene("main_menu")
 
 
 func _update_screen_effects(delta: float) -> void:
@@ -644,6 +795,9 @@ func _on_player_shield_blocked(_projectile) -> void:
 
 
 func _on_player_death_started() -> void:
+	if is_level_paused:
+		_resume_level()
+
 	game_over = true
 	music.stop()
 	_deactivate_projectiles()
