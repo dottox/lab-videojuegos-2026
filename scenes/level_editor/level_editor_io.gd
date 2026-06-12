@@ -45,7 +45,7 @@ func _write_level_config(config: ConfigFile) -> void:
 	config.set_value("meta", "music_id", editor.state.music_id)
 	config.set_value("meta", "music_path", _make_relative_if_possible(editor.state.music_path))
 	config.set_value("meta", "bpm", editor.bpm_spin.value)
-	config.set_value("meta", "start_time_ms", 0)
+	config.set_value("meta", "start_time_ms", editor.state.current_time_ms)
 
 	# Playfield first because it's the spatial base for zones/projectiles.
 	for i in editor.state.playfields.size():
