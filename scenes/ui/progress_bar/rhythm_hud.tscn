@@ -1,0 +1,189 @@
+[gd_scene format=3 uid="uid://cku64yy6cnyj8"]
+
+[ext_resource type="Script" uid="uid://ymvxeo2afalm" path="res://scenes/ui/progress_bar/rhythm_hud.gd" id="1_ly7tx"]
+[ext_resource type="Texture2D" uid="uid://fh6gxhyxm38c" path="res://assets/sprites/hud/hud_bar.jpeg" id="2_hudbar"]
+
+[sub_resource type="Shader" id="Shader_dash_cooldown"]
+code = "shader_type canvas_item;
+
+uniform float progress : hint_range(0.0, 1.0) = 1.0;
+uniform vec4 track_color : source_color = vec4(0.16, 0.17, 0.19, 1.0);
+uniform vec4 fill_color : source_color = vec4(0.02, 0.78, 1.0, 1.0);
+uniform float inner_radius : hint_range(0.0, 1.0) = 0.62;
+uniform float outer_radius : hint_range(0.0, 1.0) = 0.9;
+uniform float edge_softness : hint_range(0.001, 0.1) = 0.018;
+
+void fragment() {
+	vec2 p = UV * 2.0 - 1.0;
+	float radius = length(p);
+	float outer = 1.0 - smoothstep(outer_radius, outer_radius + edge_softness, radius);
+	float inner = smoothstep(inner_radius - edge_softness, inner_radius, radius);
+	float ring = outer * inner;
+
+	float angle = atan(p.y, p.x) + 1.57079632679;
+	if (angle < 0.0) {
+		angle += 6.28318530718;
+	}
+
+	float filled = step(angle / 6.28318530718, progress);
+	vec4 color = mix(track_color, fill_color, filled);
+	COLOR = vec4(color.rgb, color.a * ring);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dash_cooldown"]
+shader = SubResource("Shader_dash_cooldown")
+shader_parameter/progress = 1.0
+shader_parameter/track_color = Color(0.16, 0.17, 0.19, 1)
+shader_parameter/fill_color = Color(0, 0.5882353, 0.77254903, 1)
+shader_parameter/inner_radius = 0.62
+shader_parameter/outer_radius = 0.9
+shader_parameter/edge_softness = 0.018
+
+[node name="RhythmHud" type="Control" unique_id=312242608]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_ly7tx")
+
+[node name="HudBar" type="TextureRect" parent="." unique_id=345208862]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.15
+anchor_right = 0.85
+offset_bottom = 144.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = ExtResource("2_hudbar")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="HeartCountLabel" type="Label" parent="HudBar" unique_id=1398499688]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.153
+anchor_top = 0.39
+anchor_right = 0.153
+anchor_bottom = 0.39
+offset_left = -27.1792
+offset_top = 1.840004
+offset_right = 16.820808
+offset_bottom = 36.840004
+theme_override_colors/font_color = Color(0.85882354, 0.85882354, 0.85882354, 1)
+theme_override_colors/font_outline_color = Color(0.5254902, 0.5254902, 0.5254902, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 20
+text = "1"
+vertical_alignment = 1
+
+[node name="DashDisabledFilter" type="ColorRect" parent="HudBar" unique_id=1651515382]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.831
+anchor_top = 0.36
+anchor_right = 0.831
+anchor_bottom = 0.36
+offset_right = 48.0
+offset_bottom = 46.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.54)
+
+[node name="DashCooldownCircle" type="ColorRect" parent="HudBar" unique_id=808193820]
+material = SubResource("ShaderMaterial_dash_cooldown")
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.915
+anchor_top = 0.34
+anchor_right = 0.915
+anchor_bottom = 0.34
+offset_left = -15.656006
+offset_top = 13.040001
+offset_right = 16.343994
+offset_bottom = 45.04
+mouse_filter = 2
+
+[node name="CooldownLabel" type="Label" parent="HudBar/DashCooldownCircle" unique_id=1439294981]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 5.0
+offset_right = -4.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.92, 0.94, 0.96, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "OK"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScoreLabel" type="Label" parent="." unique_id=1252072583]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.172
+anchor_right = 0.172
+offset_left = 292.297
+offset_top = 140.0
+offset_right = 344.29703
+offset_bottom = 170.0
+theme_override_colors/font_color = Color(1, 0.82, 0.05, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 18
+text = "00000"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AccuracyLabel" type="Label" parent="." unique_id=150452822]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.6459305
+anchor_top = 0.0046296297
+anchor_right = 0.6459305
+anchor_bottom = 0.0046296297
+offset_left = -176.67096
+offset_top = 137.0
+offset_right = -109.2298
+offset_bottom = 167.0
+theme_override_colors/font_color = Color(0.02, 0.78, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.9)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 18
+text = "100.0%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HudBackgroundFlash" type="ColorRect" parent="." unique_id=50691939]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.55, 0.75, 1, 0)
+metadata/_edit_use_anchors_ = true
+
+[node name="HudLowHealthFilter" type="ColorRect" parent="." unique_id=221237989]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0, 0, 0)
+metadata/_edit_use_anchors_ = true

@@ -6,6 +6,19 @@
 [node name="level_1" type="Node2D" unique_id=5005]
 script = ExtResource("1_x3ahk")
 
+[node name="GameplayBackground" type="CanvasLayer" parent="."]
+layer = -100
+
+[node name="BlackBackground" type="ColorRect" parent="GameplayBackground"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
 [node name="entities" type="Node2D" parent="." unique_id=1870565441]
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1343104914]

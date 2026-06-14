@@ -1,8 +1,8 @@
 extends CanvasLayer
 
-@onready var bar: ColorRect = $Control/base_bar
-@onready var beat: ColorRect = $Control/base_bar/bar_beat
-@onready var score_label: Label = $Control/ScoreLabel
+signal rhythm_note_missed
+
+@onready var hud = $Control/RhythmHud
 
 var seconds_per_beat := 0.0
 var song_position := 0.0
@@ -24,26 +24,20 @@ var bpm_flash_timer := 0.0
 var bpm_flash_color := Color(0.82, 0.9, 1.0)
 var last_background_beat := -1
 
-var base_scale := Vector2.ONE
-var pulse_scale := Vector2(1.25, 1.25)
 var rhythm_active := false
 var hit_window := 18.0
 var default_note_speed := 260.0
 var active_notes: Array = []
 var current_score := 0
-var _score_tween: Tween
+var pending_health_current := 1
+var pending_health_max := 1
+var pending_accuracy := 100.0
 
 func _ready():
-	bar.size = Vector2(800, 30)
-	bar.set_position(Vector2((get_window().size.x / 2) - (bar.size.x / 2), 25))
-	#Con esto centramos el scale para utilizarlo luego
-	beat.set_size(Vector2(bar.size.x * 0.015, bar.size.y + (bar.size.y * 0.5)))
-	beat.set_position(Vector2((bar.size.x / 2) - (beat.size.x / 2), (bar.size.y / 2) - (beat.size.y / 2)))
-	beat.pivot_offset = beat.size / 2
-	score_label.size = Vector2(bar.size.x, 30)
-	score_label.position = Vector2(bar.position.x, bar.position.y + bar.size.y + 8.0)
-	score_label.pivot_offset = score_label.size / 2.0
-	score_label.text = _format_score(current_score)
+	hud.set_score(current_score, false)
+	hud.set_health(pending_health_current, pending_health_max)
+	hud.set_accuracy(pending_accuracy)
+	hud.set_rhythm_active(rhythm_active)
 
 func _process(delta):
 	_prune_notes()
@@ -55,31 +49,20 @@ func _process(delta):
 	if rhythm_hit_cooldown_timer > 0:
 		rhythm_hit_cooldown_timer -= delta
 
-	var bar_color := Color.WHITE
 	if bpm_flash_timer > 0:
 		bpm_flash_timer -= delta
-		var bpm_flash_t = bpm_flash_timer / bpm_flash_time
-		bar_color = bar_color.lerp(bpm_flash_color, bpm_flash_t * 0.16)
 
 	if prepare_timer > 0:
 		prepare_timer -= delta
-		var prepare_t = prepare_timer / prepare_time
-		bar_color = bar_color.lerp(Color(0.25, 0.95, 1.0), prepare_t)
 
 	if feedback_timer > 0:
 		feedback_timer -= delta
-		var feedback_t = feedback_timer / feedback_time
-		bar_color = bar_color.lerp(feedback_color, feedback_t * 0.45)
-
-	bar.modulate = bar_color
 
 	if pulse_timer > 0:
 		pulse_timer -= delta
-
-		var t = pulse_timer / pulse_time
-		beat.scale = base_scale.lerp(pulse_scale, t)
-	else:
-		beat.scale = base_scale
+	
+	_update_dash_status()
+	_update_hud_effects()
 
 func set_bpm(bpm: float):
 	seconds_per_beat = 60 / bpm
@@ -87,14 +70,30 @@ func set_bpm(bpm: float):
 
 func set_player(player) -> void:
 	player_target = player
+	if player_target != null and is_instance_valid(player_target):
+		set_health(int(player_target.get("vida")), int(player_target.get("max_vida")))
+	_update_dash_status()
 
 func set_score(value: int) -> void:
 	var increased := value > current_score
 	current_score = value
-	score_label.text = _format_score(current_score)
+	if _is_hud_ready():
+		hud.set_score(current_score, increased)
 
-	if increased:
-		_play_score_increase_feedback()
+func set_health(current_health: int, max_health: int) -> void:
+	pending_health_current = current_health
+	pending_health_max = max_health
+	if _is_hud_ready():
+		hud.set_health(current_health, max_health)
+
+func set_accuracy(value: float) -> void:
+	pending_accuracy = value
+	if _is_hud_ready():
+		hud.set_accuracy(value)
+
+func set_screen_filters(background_flash_alpha: float, low_health_alpha: float) -> void:
+	if _is_hud_ready():
+		hud.set_screen_filters(background_flash_alpha, low_health_alpha)
 
 func set_rhythm_active(active: bool, play_prepare: bool = true) -> void:
 	if rhythm_active == active:
@@ -109,11 +108,14 @@ func set_rhythm_active(active: bool, play_prepare: bool = true) -> void:
 	else:
 		prepare_timer = 0.0
 
+	hud.set_rhythm_active(rhythm_active)
+
 	if not rhythm_active:
 		clear_notes()
 	
 func update_song_time(time: float):
 	song_position = time
+	hud.set_song_position(song_position)
 
 	if seconds_per_beat <= 0:
 		return
@@ -134,21 +136,6 @@ func trigger_pulse():
 func trigger_background_pulse() -> void:
 	bpm_flash_timer = bpm_flash_time
 
-func _format_score(value: int) -> String:
-	return "Score: %06d" % value
-
-func _play_score_increase_feedback() -> void:
-	if _score_tween != null:
-		_score_tween.kill()
-
-	score_label.scale = Vector2(1.12, 1.12)
-	score_label.modulate = Color(1.0, 0.9, 0.35, 1.0)
-
-	_score_tween = create_tween()
-	_score_tween.set_parallel(true)
-	_score_tween.tween_property(score_label, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	_score_tween.tween_property(score_label, "modulate", Color.WHITE, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-
 func register_note(note) -> void:
 	if note not in active_notes:
 		active_notes.append(note)
@@ -161,10 +148,8 @@ func clear_notes() -> void:
 	active_notes.clear()
 
 func get_note_spawn_data(config_pos: Vector2, speed: float) -> Dictionary:
-	var bar_rect := bar.get_global_rect()
-	var center_y := bar_rect.position.y + bar_rect.size.y / 2.0
-	var left := Vector2(bar_rect.position.x, center_y)
-	var right := Vector2(bar_rect.position.x + bar_rect.size.x, center_y)
+	var left: Vector2 = hud.get_lane_left()
+	var right: Vector2 = hud.get_lane_right()
 	var spawn_left := config_pos.distance_to(left) <= config_pos.distance_to(right)
 	var note_speed := speed if speed > 0 else default_note_speed
 	var spawn_pos := left if spawn_left else right
@@ -220,6 +205,7 @@ func _process_note_misses() -> void:
 			active_notes.erase(note)
 			note.play_rhythm_miss_feedback()
 			play_miss_feedback()
+			rhythm_note_missed.emit()
 			_damage_player()
 	_update_next_note_accent()
 
@@ -256,8 +242,7 @@ func _get_closest_note_to_center():
 	return closest
 
 func _get_center_x() -> float:
-	var bar_rect := bar.get_global_rect()
-	return bar_rect.position.x + bar_rect.size.x / 2.0
+	return hud.get_lane_center_x()
 
 func _damage_player() -> void:
 	if player_target != null and is_instance_valid(player_target):
@@ -267,3 +252,39 @@ func _prune_notes() -> void:
 	for note in active_notes.duplicate():
 		if not is_instance_valid(note) or not note.active:
 			active_notes.erase(note)
+
+func _update_dash_status() -> void:
+	if not _is_hud_ready():
+		return
+
+	if player_target == null or not is_instance_valid(player_target):
+		hud.set_dash_status(0.0, 0.0)
+		return
+
+	var state = player_target.get("current_state")
+	if state == null:
+		hud.set_dash_status(0.0, 0.0)
+		return
+
+	var cooldown_value = state.get("dash_cooldown")
+	var cooldown_time_value = state.get("dash_cooldown_time")
+	if cooldown_value == null or cooldown_time_value == null:
+		hud.set_dash_status(0.0, 0.0)
+		return
+
+	var cooldown := float(cooldown_value)
+	var cooldown_time := float(cooldown_time_value)
+	hud.set_dash_status(cooldown, cooldown_time)
+
+func _update_hud_effects() -> void:
+	if not _is_hud_ready():
+		return
+
+	var pulse_t := pulse_timer / pulse_time if pulse_time > 0.0 else 0.0
+	var prepare_t := prepare_timer / prepare_time if prepare_time > 0.0 else 0.0
+	var bpm_flash_t := bpm_flash_timer / bpm_flash_time if bpm_flash_time > 0.0 else 0.0
+	var feedback_t := feedback_timer / feedback_time if feedback_time > 0.0 else 0.0
+	hud.set_effects(pulse_t, prepare_t, bpm_flash_t, feedback_t, feedback_color)
+
+func _is_hud_ready() -> bool:
+	return hud != null and is_instance_valid(hud)

@@ -25,6 +25,8 @@ var zone_id: int = 0
 
 var velocity: Vector2 = Vector2.ZERO
 var on_despawn: Callable = Callable()
+var on_evaded: Callable = Callable()
+var on_player_hit: Callable = Callable()
 var active: bool = false
 var _base_scale := Vector2.ONE
 var _base_modulate := Color.WHITE
@@ -52,6 +54,8 @@ func _physics_process(delta: float) -> void:
 	position += velocity * delta
 
 	if not _is_on_screen():
+		if on_evaded.is_valid():
+			on_evaded.call(self)
 		despawn()
 
 func activate(spawn_pos: Vector2, vel: Vector2) -> void:
@@ -130,5 +134,7 @@ func _is_on_screen() -> bool:
 
 func _on_body_entered(body: Node) -> void:
 	if body.is_in_group("player"):
+		if on_player_hit.is_valid():
+			on_player_hit.call(self)
 		body.receive_hit()
 		play_player_hit_feedback()

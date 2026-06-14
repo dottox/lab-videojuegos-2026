@@ -66,10 +66,13 @@ var shield_block_score := 75
 var rhythm_hit_score := 100
 
 var effects_canvas: CanvasLayer
+var background_canvas: CanvasLayer
+var gameplay_background: ColorRect
 var background_flash: ColorRect
 var low_health_filter: ColorRect
 var death_screen: CanvasLayer
 var death_score_label: Label
+var death_accuracy_label: Label
 var pause_canvas: CanvasLayer
 var pause_menu_panel: PanelContainer
 var pause_options_screen: Control
@@ -81,6 +84,8 @@ var background_flash_alpha := 0.12
 var low_health_filter_alpha := 0.0
 var max_low_health_filter_alpha := 0.26
 var is_level_paused := false
+var accuracy_correct_count := 0
+var accuracy_error_count := 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -90,6 +95,8 @@ func _ready() -> void:
 func load_level(level_path: String) -> void:
 	game_over = false
 	score = 0
+	accuracy_correct_count = 0
+	accuracy_error_count = 0
 	bullet_hell_score_tick_timer = 0.0
 	last_background_beat = -1
 	background_flash_timer = 0.0
@@ -182,6 +189,8 @@ func _prepare_projectile_for_pool(projectile: Projectile, projectile_type: Strin
 	projectile.monitoring = false
 	projectile.monitorable = false
 	projectile.on_despawn = Callable(self, "_release_projectile_to_pool").bind(normalized_type)
+	projectile.on_evaded = Callable(self, "_on_projectile_evaded").bind(normalized_type)
+	projectile.on_player_hit = Callable(self, "_on_projectile_hit_player").bind(normalized_type)
 
 
 func _get_projectile_parent(projectile_type: String) -> Node:
@@ -376,9 +385,11 @@ func spawn_player() -> void:
 
 
 func init_screen_effects() -> void:
+	_ensure_black_background()
+
 	effects_canvas = CanvasLayer.new()
 	effects_canvas.name = "ScreenEffects"
-	effects_canvas.layer = 1
+	effects_canvas.layer = 5
 	add_child(effects_canvas)
 
 	background_flash = ColorRect.new()
@@ -396,12 +407,36 @@ func init_screen_effects() -> void:
 	effects_canvas.add_child(low_health_filter)
 
 
+func _ensure_black_background() -> void:
+	background_canvas = get_node_or_null("GameplayBackground") as CanvasLayer
+	if background_canvas == null:
+		background_canvas = CanvasLayer.new()
+		background_canvas.name = "GameplayBackground"
+		add_child(background_canvas)
+
+	background_canvas.layer = -100
+
+	gameplay_background = background_canvas.get_node_or_null("BlackBackground") as ColorRect
+	if gameplay_background == null:
+		gameplay_background = ColorRect.new()
+		gameplay_background.name = "BlackBackground"
+		background_canvas.add_child(gameplay_background)
+
+	gameplay_background.color = Color.BLACK
+	gameplay_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_make_full_screen_rect(gameplay_background)
+
+
 func init_progress_bar() -> void:
 	rythm_bar.layer = 2
 	entities.add_child(rythm_bar)
 	rythm_bar.set_bpm(bpm)
 	rythm_bar.set_player(player)
 	rythm_bar.set_score(score)
+	rythm_bar.set_accuracy(_get_accuracy_percent())
+	_update_hud_screen_filters()
+	if not rythm_bar.rhythm_note_missed.is_connected(_on_rhythm_note_missed):
+		rythm_bar.rhythm_note_missed.connect(_on_rhythm_note_missed)
 
 
 func _make_full_screen_rect(rect: ColorRect) -> void:
@@ -586,6 +621,7 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("rhythm_hit"):
 		if rythm_bar.judge_hit():
+			_register_accuracy_result(true)
 			_add_score(rhythm_hit_score)
 
 	process_projectiles()
@@ -749,9 +785,19 @@ func _update_screen_effects(delta: float) -> void:
 		filter_color.a = low_health_filter_alpha
 		low_health_filter.color = filter_color
 
+	_update_hud_screen_filters()
+
 
 func _trigger_background_flash() -> void:
 	background_flash_timer = background_flash_time
+
+
+func _update_hud_screen_filters() -> void:
+	if rythm_bar == null or not is_instance_valid(rythm_bar):
+		return
+
+	var flash_t := background_flash_timer / background_flash_time if background_flash_time > 0.0 else 0.0
+	rythm_bar.set_screen_filters(background_flash_alpha * flash_t, low_health_filter_alpha)
 
 
 func _process_bullet_hell_score(delta: float) -> void:
@@ -774,6 +820,45 @@ func _add_score(points: int) -> void:
 		rythm_bar.set_score(score)
 
 
+func _register_accuracy_result(correct: bool) -> void:
+	if correct:
+		accuracy_correct_count += 1
+	else:
+		accuracy_error_count += 1
+
+	if rythm_bar != null and is_instance_valid(rythm_bar):
+		rythm_bar.set_accuracy(_get_accuracy_percent())
+
+
+func _get_accuracy_percent() -> float:
+	var total := accuracy_correct_count + accuracy_error_count
+	if total <= 0:
+		return 100.0
+	return float(accuracy_correct_count) / float(total) * 100.0
+
+
+func _on_rhythm_note_missed() -> void:
+	_register_accuracy_result(false)
+
+
+func _on_projectile_evaded(projectile: Projectile, projectile_type: String) -> void:
+	if game_over or projectile == null:
+		return
+
+	var normalized_type := Projectile.normalize_type(projectile_type)
+	if normalized_type == "bullet":
+		_register_accuracy_result(true)
+
+
+func _on_projectile_hit_player(projectile: Projectile, projectile_type: String) -> void:
+	if game_over or projectile == null:
+		return
+
+	var normalized_type := Projectile.normalize_type(projectile_type)
+	if normalized_type == "bullet":
+		_register_accuracy_result(false)
+
+
 func _change_player_to_next_playfield() -> void:
 	var current_playfield = player.playfield
 	for entity in PlayfieldLayer.get_children():
@@ -790,6 +875,9 @@ func _array_to_rect2(value: Variant, fallback: Rect2 = Rect2()) -> Rect2:
 	return fallback
 
 func _on_player_health_changed(current_health: int, max_health: int) -> void:
+	if rythm_bar != null and is_instance_valid(rythm_bar):
+		rythm_bar.set_health(current_health, max_health)
+
 	if max_health <= 0 or current_health > max_health * 0.5:
 		low_health_filter_alpha = 0.0
 		return
@@ -800,6 +888,7 @@ func _on_player_health_changed(current_health: int, max_health: int) -> void:
 
 
 func _on_player_shield_blocked(_projectile) -> void:
+	_register_accuracy_result(true)
 	_add_score(shield_block_score)
 
 
@@ -885,6 +974,12 @@ func _show_death_screen() -> void:
 	death_score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	death_score_label.add_theme_font_size_override("font_size", 24)
 	layout.add_child(death_score_label)
+
+	death_accuracy_label = Label.new()
+	death_accuracy_label.text = "Accuracy: %.1f%%" % _get_accuracy_percent()
+	death_accuracy_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	death_accuracy_label.add_theme_font_size_override("font_size", 22)
+	layout.add_child(death_accuracy_label)
 
 	var spacer := Control.new()
 	spacer.custom_minimum_size = Vector2(0, 8)
