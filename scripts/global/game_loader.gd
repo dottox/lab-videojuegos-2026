@@ -18,6 +18,9 @@ var common_assets = {
 	"level_loader": "res://scenes/level_loader/level_loader.tscn",
 	"opciones": "res://scenes/ui/menus/options_menu.tscn",
 	"creditos": "res://scenes/ui/menus/credits.tscn",
+	"pause_overlay": "res://scenes/ui/menus/pause_overlay.tscn",
+	"death_overlay": "res://scenes/ui/menus/death_overlay.tscn",
+	"level_complete_overlay": "res://scenes/ui/menus/level_complete_overlay.tscn",
 }
 
 var loaded_resources = {}

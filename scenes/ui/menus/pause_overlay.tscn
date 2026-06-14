@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://bbpg6glpykl7r"]
+
+[node name="PauseMenu" type="CanvasLayer"]
+layer = 20
+process_mode = 3
+visible = false
+
+[node name="Overlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0, 0, 0, 0.54)
+metadata/_edit_use_anchors_ = true
+
+[node name="Center" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="MainPanel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(320, 260)
+
+[node name="Margin" type="MarginContainer" parent="Center/MainPanel"]
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="Layout" type="VBoxContainer" parent="Center/MainPanel/Margin"]
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Title" type="Label" parent="Center/MainPanel/Margin/Layout"]
+theme_override_font_sizes/font_size = 36
+text = "Pausa"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="Center/MainPanel/Margin/Layout"]
+custom_minimum_size = Vector2(240, 44)
+text = "Reanudar"
+
+[node name="OptionsButton" type="Button" parent="Center/MainPanel/Margin/Layout"]
+custom_minimum_size = Vector2(240, 44)
+text = "Opciones"
+
+[node name="BackToMenuButton" type="Button" parent="Center/MainPanel/Margin/Layout"]
+custom_minimum_size = Vector2(240, 44)
+text = "Volver al menu"

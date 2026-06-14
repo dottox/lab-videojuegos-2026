@@ -6,10 +6,10 @@
 [node name="level_1" type="Node2D" unique_id=5005]
 script = ExtResource("1_x3ahk")
 
-[node name="GameplayBackground" type="CanvasLayer" parent="."]
+[node name="GameplayBackground" type="CanvasLayer" parent="." unique_id=315798860]
 layer = -100
 
-[node name="BlackBackground" type="ColorRect" parent="GameplayBackground"]
+[node name="BlackBackground" type="ColorRect" parent="GameplayBackground" unique_id=1230305566]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -17,6 +17,29 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
+metadata/_edit_use_anchors_ = true
+
+[node name="ScreenEffects" type="CanvasLayer" parent="." unique_id=738911220]
+layer = 5
+
+[node name="BackgroundFlash" type="ColorRect" parent="ScreenEffects" unique_id=746266437]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.55, 0.75, 1, 0)
+metadata/_edit_use_anchors_ = true
+
+[node name="LowHealthFilter" type="ColorRect" parent="ScreenEffects" unique_id=468761610]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 0, 0, 0)
 metadata/_edit_use_anchors_ = true
 
 [node name="entities" type="Node2D" parent="." unique_id=1870565441]

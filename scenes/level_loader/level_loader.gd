@@ -73,17 +73,23 @@ var low_health_filter: ColorRect
 var death_screen: CanvasLayer
 var death_score_label: Label
 var death_accuracy_label: Label
+var level_complete_screen: CanvasLayer
+var level_complete_score_label: Label
+var level_complete_accuracy_label: Label
 var pause_canvas: CanvasLayer
-var pause_menu_panel: PanelContainer
+var pause_menu_panel: Control
 var pause_options_screen: Control
 var pause_resume_button: Button
+var pause_options_button: Button
+var pause_back_to_menu_button: Button
 var last_background_beat := -1
 var background_flash_timer := 0.0
 var background_flash_time := 0.18
-var background_flash_alpha := 0.12
+var background_flash_alpha := 0.05
 var low_health_filter_alpha := 0.0
 var max_low_health_filter_alpha := 0.26
 var is_level_paused := false
+var level_completed := false
 var accuracy_correct_count := 0
 var accuracy_error_count := 0
 
@@ -94,6 +100,7 @@ func _ready() -> void:
 
 func load_level(level_path: String) -> void:
 	game_over = false
+	level_completed = false
 	score = 0
 	accuracy_correct_count = 0
 	accuracy_error_count = 0
@@ -385,46 +392,41 @@ func spawn_player() -> void:
 
 
 func init_screen_effects() -> void:
-	_ensure_black_background()
-
-	effects_canvas = CanvasLayer.new()
-	effects_canvas.name = "ScreenEffects"
-	effects_canvas.layer = 5
-	add_child(effects_canvas)
-
-	background_flash = ColorRect.new()
-	background_flash.name = "BackgroundFlash"
-	background_flash.color = Color(0.55, 0.75, 1.0, 0.0)
-	background_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_make_full_screen_rect(background_flash)
-	effects_canvas.add_child(background_flash)
-
-	low_health_filter = ColorRect.new()
-	low_health_filter.name = "LowHealthFilter"
-	low_health_filter.color = Color(1.0, 0.0, 0.0, 0.0)
-	low_health_filter.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_make_full_screen_rect(low_health_filter)
-	effects_canvas.add_child(low_health_filter)
+	_bind_background_nodes()
+	_bind_screen_effect_nodes()
 
 
-func _ensure_black_background() -> void:
+func _bind_background_nodes() -> void:
 	background_canvas = get_node_or_null("GameplayBackground") as CanvasLayer
 	if background_canvas == null:
-		background_canvas = CanvasLayer.new()
-		background_canvas.name = "GameplayBackground"
-		add_child(background_canvas)
-
-	background_canvas.layer = -100
+		push_warning("GameplayBackground node is missing")
+		return
 
 	gameplay_background = background_canvas.get_node_or_null("BlackBackground") as ColorRect
 	if gameplay_background == null:
-		gameplay_background = ColorRect.new()
-		gameplay_background.name = "BlackBackground"
-		background_canvas.add_child(gameplay_background)
+		push_warning("BlackBackground node is missing")
+		return
 
-	gameplay_background.color = Color.BLACK
 	gameplay_background.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_make_full_screen_rect(gameplay_background)
+
+
+func _bind_screen_effect_nodes() -> void:
+	effects_canvas = get_node_or_null("ScreenEffects") as CanvasLayer
+	if effects_canvas == null:
+		push_warning("ScreenEffects node is missing")
+		return
+
+	background_flash = effects_canvas.get_node_or_null("BackgroundFlash") as ColorRect
+	if background_flash == null:
+		push_warning("BackgroundFlash node is missing")
+	else:
+		background_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	low_health_filter = effects_canvas.get_node_or_null("LowHealthFilter") as ColorRect
+	if low_health_filter == null:
+		push_warning("LowHealthFilter node is missing")
+	else:
+		low_health_filter.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func init_progress_bar() -> void:
@@ -437,14 +439,6 @@ func init_progress_bar() -> void:
 	_update_hud_screen_filters()
 	if not rythm_bar.rhythm_note_missed.is_connected(_on_rhythm_note_missed):
 		rythm_bar.rhythm_note_missed.connect(_on_rhythm_note_missed)
-
-
-func _make_full_screen_rect(rect: ColorRect) -> void:
-	rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-	rect.offset_left = 0.0
-	rect.offset_top = 0.0
-	rect.offset_right = 0.0
-	rect.offset_bottom = 0.0
 
 
 func _apply_initial_phase() -> void:
@@ -495,6 +489,8 @@ func init_music() -> void:
 	_load_music_from_level_config()
 	music.bus = "Analyzer"
 	AudioAnalyzer.register_music(music)
+	if not music.finished.is_connected(_on_music_finished):
+		music.finished.connect(_on_music_finished)
 	music.play(start_time_ms / 1000.0)
 	music.seek(start_time_ms / 1000.0)
 	music_timer = start_time_ms / 1000.0
@@ -650,62 +646,23 @@ func _create_pause_overlay() -> void:
 	if pause_canvas != null and is_instance_valid(pause_canvas):
 		return
 
-	pause_canvas = CanvasLayer.new()
-	pause_canvas.name = "PauseMenu"
-	pause_canvas.layer = 20
+	var pause_scene: PackedScene = GameLoader.get_asset("pause_overlay")
+	if pause_scene == null:
+		push_warning("No se pudo cargar pause_overlay")
+		return
+
+	pause_canvas = pause_scene.instantiate()
 	pause_canvas.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
-	pause_canvas.visible = false
 	add_child(pause_canvas)
 
-	var overlay := ColorRect.new()
-	overlay.color = Color(0.0, 0.0, 0.0, 0.54)
-	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	_make_full_screen_rect(overlay)
-	pause_canvas.add_child(overlay)
+	pause_menu_panel = pause_canvas.get_node("Center/MainPanel") as Control
+	pause_resume_button = pause_canvas.get_node("Center/MainPanel/Margin/Layout/ResumeButton") as Button
+	pause_options_button = pause_canvas.get_node("Center/MainPanel/Margin/Layout/OptionsButton") as Button
+	pause_back_to_menu_button = pause_canvas.get_node("Center/MainPanel/Margin/Layout/BackToMenuButton") as Button
 
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	pause_canvas.add_child(center)
-
-	pause_menu_panel = PanelContainer.new()
-	pause_menu_panel.custom_minimum_size = Vector2(320, 260)
-	center.add_child(pause_menu_panel)
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 28)
-	margin.add_theme_constant_override("margin_top", 24)
-	margin.add_theme_constant_override("margin_right", 28)
-	margin.add_theme_constant_override("margin_bottom", 24)
-	pause_menu_panel.add_child(margin)
-
-	var layout := VBoxContainer.new()
-	layout.alignment = BoxContainer.ALIGNMENT_CENTER
-	layout.add_theme_constant_override("separation", 14)
-	margin.add_child(layout)
-
-	var title := Label.new()
-	title.text = "Pausa"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 36)
-	layout.add_child(title)
-
-	pause_resume_button = Button.new()
-	pause_resume_button.text = "Reanudar"
-	pause_resume_button.custom_minimum_size = Vector2(240, 44)
 	pause_resume_button.pressed.connect(_resume_level)
-	layout.add_child(pause_resume_button)
-
-	var options_button := Button.new()
-	options_button.text = "Opciones"
-	options_button.custom_minimum_size = Vector2(240, 44)
-	options_button.pressed.connect(_show_pause_options)
-	layout.add_child(options_button)
-
-	var back_to_menu_button := Button.new()
-	back_to_menu_button.text = "Volver al menu"
-	back_to_menu_button.custom_minimum_size = Vector2(240, 44)
-	back_to_menu_button.pressed.connect(_on_pause_back_to_menu_pressed)
-	layout.add_child(back_to_menu_button)
+	pause_options_button.pressed.connect(_show_pause_options)
+	pause_back_to_menu_button.pressed.connect(_on_pause_back_to_menu_pressed)
 
 
 func _pause_level() -> void:
@@ -893,6 +850,9 @@ func _on_player_shield_blocked(_projectile) -> void:
 
 
 func _on_player_death_started() -> void:
+	if level_completed:
+		return
+
 	if is_level_paused:
 		_resume_level()
 
@@ -905,6 +865,9 @@ func _on_player_death_started() -> void:
 
 
 func _on_player_died() -> void:
+	if level_completed:
+		return
+
 	if not game_over:
 		_on_player_death_started()
 
@@ -912,6 +875,26 @@ func _on_player_died() -> void:
 		return
 
 	_show_death_screen()
+
+
+func _on_music_finished() -> void:
+	if game_over or level_completed:
+		return
+
+	level_completed = true
+	game_over = true
+	low_health_filter_alpha = 0.0
+	background_flash_timer = 0.0
+	_deactivate_projectiles()
+
+	if rythm_bar != null and is_instance_valid(rythm_bar):
+		rythm_bar.clear_notes()
+		rythm_bar.set_screen_filters(0.0, 0.0)
+
+	if is_in_editor:
+		return
+
+	_show_level_complete_screen()
 
 
 func _deactivate_projectiles() -> void:
@@ -931,73 +914,48 @@ func _show_death_screen() -> void:
 	if death_screen != null and is_instance_valid(death_screen):
 		return
 
-	death_screen = CanvasLayer.new()
-	death_screen.name = "DeathScreen"
-	death_screen.layer = 10
-	add_child(death_screen)
+	death_screen = _create_result_screen("death_overlay")
+	if death_screen == null:
+		return
 
-	var overlay := ColorRect.new()
-	overlay.color = Color(0.02, 0.0, 0.0, 0.72)
-	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_make_full_screen_rect(overlay)
-	death_screen.add_child(overlay)
+	death_score_label = death_screen.get_node("Center/Panel/Margin/Layout/ScoreLabel") as Label
+	death_accuracy_label = death_screen.get_node("Center/Panel/Margin/Layout/AccuracyLabel") as Label
 
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	death_screen.add_child(center)
 
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(360, 260)
-	center.add_child(panel)
+func _show_level_complete_screen() -> void:
+	if level_complete_screen != null and is_instance_valid(level_complete_screen):
+		return
 
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 28)
-	margin.add_theme_constant_override("margin_top", 24)
-	margin.add_theme_constant_override("margin_right", 28)
-	margin.add_theme_constant_override("margin_bottom", 24)
-	panel.add_child(margin)
+	level_complete_screen = _create_result_screen("level_complete_overlay")
+	if level_complete_screen == null:
+		return
 
-	var layout := VBoxContainer.new()
-	layout.alignment = BoxContainer.ALIGNMENT_CENTER
-	layout.add_theme_constant_override("separation", 14)
-	margin.add_child(layout)
+	level_complete_score_label = level_complete_screen.get_node("Center/Panel/Margin/Layout/ScoreLabel") as Label
+	level_complete_accuracy_label = level_complete_screen.get_node("Center/Panel/Margin/Layout/AccuracyLabel") as Label
 
-	var title := Label.new()
-	title.text = "GAME OVER"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 38)
-	title.add_theme_color_override("font_color", Color(1.0, 0.22, 0.18, 1.0))
-	layout.add_child(title)
 
-	death_score_label = Label.new()
-	death_score_label.text = "Final Score: %06d" % score
-	death_score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	death_score_label.add_theme_font_size_override("font_size", 24)
-	layout.add_child(death_score_label)
+func _create_result_screen(asset_key: String) -> CanvasLayer:
+	var result_scene: PackedScene = GameLoader.get_asset(asset_key)
+	if result_scene == null:
+		push_warning("No se pudo cargar %s" % asset_key)
+		return null
 
-	death_accuracy_label = Label.new()
-	death_accuracy_label.text = "Accuracy: %.1f%%" % _get_accuracy_percent()
-	death_accuracy_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	death_accuracy_label.add_theme_font_size_override("font_size", 22)
-	layout.add_child(death_accuracy_label)
+	var result_screen := result_scene.instantiate() as CanvasLayer
+	add_child(result_screen)
 
-	var spacer := Control.new()
-	spacer.custom_minimum_size = Vector2(0, 8)
-	layout.add_child(spacer)
+	var score_label := result_screen.get_node("Center/Panel/Margin/Layout/ScoreLabel") as Label
+	var accuracy_label := result_screen.get_node("Center/Panel/Margin/Layout/AccuracyLabel") as Label
+	var play_again := result_screen.get_node("Center/Panel/Margin/Layout/PlayAgainButton") as Button
+	var back_to_menu := result_screen.get_node("Center/Panel/Margin/Layout/BackToMenuButton") as Button
 
-	var play_again := Button.new()
-	play_again.text = "Play Again"
-	play_again.custom_minimum_size = Vector2(260, 44)
+	score_label.text = "Final Score: %06d" % score
+	accuracy_label.text = "Accuracy: %.1f%%" % _get_accuracy_percent()
 	play_again.pressed.connect(_on_play_again_pressed)
-	layout.add_child(play_again)
-
-	var back_to_menu := Button.new()
-	back_to_menu.text = "Back to Menu"
-	back_to_menu.custom_minimum_size = Vector2(260, 44)
 	back_to_menu.pressed.connect(_on_back_to_menu_pressed)
-	layout.add_child(back_to_menu)
 
+	result_screen.visible = true
 	play_again.grab_focus()
+	return result_screen
 
 
 func _on_play_again_pressed() -> void:
