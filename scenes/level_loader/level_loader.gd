@@ -85,7 +85,7 @@ var pause_back_to_menu_button: Button
 var last_background_beat := -1
 var background_flash_timer := 0.0
 var background_flash_time := 0.18
-var background_flash_alpha := 0.05
+var background_flash_alpha := 0.07
 var low_health_filter_alpha := 0.0
 var max_low_health_filter_alpha := 0.26
 var is_level_paused := false

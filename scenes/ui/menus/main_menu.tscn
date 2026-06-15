@@ -57,6 +57,11 @@ custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
 text = "Jugar"
 
+[node name="Tutorial" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(260, 44)
+layout_mode = 2
+text = "Tutorial"
+
 [node name="Editor" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1768348047]
 custom_minimum_size = Vector2(260, 44)
 layout_mode = 2

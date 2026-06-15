@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cbwdnn8q2glwu"]
+
+[node name="TutorialIconBullet" type="Control" unique_id=1221743825]
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 3
+anchors_preset = 0
+offset_left = 51.0
+offset_top = 56.0
+offset_right = 127.0
+offset_bottom = 132.0
+
+[node name="Background" type="Polygon2D" parent="." unique_id=2068369802]
+position = Vector2(38, 38)
+color = Color(0.15, 0.17, 0.24, 1)
+polygon = PackedVector2Array(32, 0, 27.713, 16, 16, 27.713, 0, 32, -16, 27.713, -27.713, 16, -32, 0, -27.713, -16, -16, -27.713, 0, -32, 16, -27.713, 27.713, -16)
+
+[node name="BulletA" type="Polygon2D" parent="." unique_id=518553121]
+position = Vector2(22, 29)
+color = Color(1, 0.25, 0.25, 1)
+polygon = PackedVector2Array(6, 0, 4.243, 4.243, 0, 6, -4.243, 4.243, -6, 0, -4.243, -4.243, 0, -6, 4.243, -4.243)
+
+[node name="BulletB" type="Polygon2D" parent="." unique_id=1991648352]
+position = Vector2(51, 25)
+color = Color(1, 0.85, 0.2, 1)
+polygon = PackedVector2Array(6, 0, 4.243, 4.243, 0, 6, -4.243, 4.243, -6, 0, -4.243, -4.243, 0, -6, 4.243, -4.243)
+
+[node name="BulletC" type="Polygon2D" parent="." unique_id=332626570]
+position = Vector2(30, 48)
+color = Color(0.35, 0.8, 1, 1)
+polygon = PackedVector2Array(6, 0, 4.243, 4.243, 0, 6, -4.243, 4.243, -6, 0, -4.243, -4.243, 0, -6, 4.243, -4.243)
+
+[node name="BulletD" type="Polygon2D" parent="." unique_id=812065393]
+position = Vector2(53, 52)
+color = Color(0.9, 0.35, 1, 1)
+polygon = PackedVector2Array(6, 0, 4.243, 4.243, 0, 6, -4.243, 4.243, -6, 0, -4.243, -4.243, 0, -6, 4.243, -4.243)

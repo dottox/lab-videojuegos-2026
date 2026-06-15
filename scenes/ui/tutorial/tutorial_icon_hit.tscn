@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[node name="TutorialIconHit" type="Control"]
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 2
+
+[node name="Background" type="Polygon2D" parent="."]
+position = Vector2(38, 38)
+color = Color(0.15, 0.17, 0.24, 1)
+polygon = PackedVector2Array(32, 0, 27.713, 16, 16, 27.713, 0, 32, -16, 27.713, -27.713, 16, -32, 0, -27.713, -16, -16, -27.713, 0, -32, 16, -27.713, 27.713, -16)
+
+[node name="Key" type="Label" parent="."]
+layout_mode = 0
+offset_left = 19.0
+offset_top = 28.0
+offset_right = 39.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "H"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Note" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 24.0
+offset_right = 56.0
+offset_bottom = 52.0
+color = Color(0.25, 1, 0.35, 1)
+

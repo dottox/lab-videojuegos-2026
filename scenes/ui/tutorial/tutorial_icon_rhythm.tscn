@@ -1,0 +1,47 @@
+[gd_scene format=3]
+
+[node name="TutorialIconRhythm" type="Control"]
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 2
+
+[node name="Background" type="Polygon2D" parent="."]
+position = Vector2(38, 38)
+color = Color(0.15, 0.17, 0.24, 1)
+polygon = PackedVector2Array(32, 0, 27.713, 16, 16, 27.713, 0, 32, -16, 27.713, -27.713, 16, -32, 0, -27.713, -16, -16, -27.713, 0, -32, 16, -27.713, 27.713, -16)
+
+[node name="Bar" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.58
+anchor_right = 0.8
+anchor_bottom = 0.65
+color = Color(0.35, 0.9, 1, 1)
+
+[node name="CenterLine" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.48
+anchor_top = 0.28
+anchor_right = 0.52
+anchor_bottom = 0.72
+color = Color(1, 0.9, 0.25, 1)
+
+[node name="LeftNote" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.28
+anchor_top = 0.32
+anchor_right = 0.36
+anchor_bottom = 0.62
+color = Color(0.2, 0.95, 1, 1)
+
+[node name="RightNote" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.65
+anchor_top = 0.3
+anchor_right = 0.73
+anchor_bottom = 0.6
+color = Color(1, 0.9, 0.25, 1)
+

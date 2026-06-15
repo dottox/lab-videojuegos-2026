@@ -1,6 +1,7 @@
 extends Control
 
 @onready var jugar: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Jugar
+@onready var tutorial: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Tutorial
 @onready var opciones: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Opciones
 @onready var creditos: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Creditos
 @onready var salir: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Salir
@@ -17,6 +18,7 @@ func _ready():
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 	spawn_timer.start()
 	jugar.pressed.connect(_on_play_pressed)
+	tutorial.pressed.connect(_on_tutorial_pressed)
 	editor.pressed.connect(_on_editor_pressed)
 	opciones.pressed.connect(_on_options_pressed)
 	creditos.pressed.connect(_on_credits_pressed)
@@ -51,6 +53,9 @@ func _release_bullet(bullet: Bullet) -> void:
 		
 func _on_play_pressed():
 	GameLoader.load_scene("level_selector")
+
+func _on_tutorial_pressed():
+	GameLoader.load_scene("tutorial_intro")
 
 func _on_editor_pressed():
 	GameLoader.load_scene("level_editor")

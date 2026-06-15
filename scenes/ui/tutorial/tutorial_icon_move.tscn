@@ -1,0 +1,59 @@
+[gd_scene format=3 uid="uid://cnxb0c6bd1qnu"]
+
+[node name="TutorialIconMove" type="Control" unique_id=6980350]
+custom_minimum_size = Vector2(76, 76)
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Background" type="Polygon2D" parent="." unique_id=1265921617]
+position = Vector2(38, 38)
+color = Color(0.15, 0.17, 0.24, 1)
+polygon = PackedVector2Array(32, 0, 27.713, 16, 16, 27.713, 0, 32, -16, 27.713, -27.713, 16, -32, 0, -27.713, -16, -16, -27.713, 0, -32, 16, -27.713, 27.713, -16)
+
+[node name="W" type="Label" parent="." unique_id=884053711]
+layout_mode = 0
+offset_left = 29.0
+offset_top = 15.0
+offset_right = 47.0
+offset_bottom = 33.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "W"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="A" type="Label" parent="." unique_id=1266583316]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 34.0
+offset_right = 33.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="S" type="Label" parent="." unique_id=954038625]
+layout_mode = 0
+offset_left = 29.0
+offset_top = 34.0
+offset_right = 47.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "S"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="D" type="Label" parent="." unique_id=8987447]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 34.0
+offset_right = 62.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "D"
+horizontal_alignment = 1
+vertical_alignment = 1

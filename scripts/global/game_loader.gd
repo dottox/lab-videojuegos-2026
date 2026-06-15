@@ -14,6 +14,7 @@ var common_assets = {
 	"rythm_bar": "res://scenes/ui/progress_bar/progress_bar.tscn",
 	"main_menu": "res://scenes/ui/menus/main_menu.tscn",
 	"level_selector": "res://scenes/ui/menus/level_selector.tscn",
+	"tutorial_intro": "res://scenes/ui/tutorial/tutorial_intro.tscn",
 	"level_editor": "res://scenes/level_editor/level_editor.tscn",
 	"level_loader": "res://scenes/level_loader/level_loader.tscn",
 	"opciones": "res://scenes/ui/menus/options_menu.tscn",
@@ -26,6 +27,7 @@ var common_assets = {
 var loaded_resources = {}
 var sync_asset_keys := {
 	"rhythm_note": true,
+	"tutorial_intro": true,
 }
 
 var debug_draw_enabled := false
