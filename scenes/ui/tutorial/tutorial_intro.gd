@@ -46,8 +46,6 @@ func _advance() -> void:
 		_show_screen(screen_index + 1)
 		return
 
-	GameLoader.load_level(TUTORIAL_LEVEL_PATH)
-
 func _on_delay_timer_timeout() -> void:
 	can_continue = true
 	continue_label.text = "Press any key to continue"

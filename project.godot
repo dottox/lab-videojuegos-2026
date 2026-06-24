@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="lab-videojuegos-2026"
-run/main_scene="uid://bas7kye5q42ee"
+run/main_scene="res://scenes/ui/cinematic/cinematic_intro.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 

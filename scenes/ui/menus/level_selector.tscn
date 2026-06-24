@@ -46,7 +46,7 @@ alignment = 1
 [node name="Title" type="Label" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=555555555]
 layout_mode = 2
 theme_override_font_sizes/font_size = 36
-text = "Select a Level"
+text = "Selecciona un nivel"
 horizontal_alignment = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=52949820]

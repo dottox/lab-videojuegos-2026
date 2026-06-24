@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b883c0q1eot21"]
 
-[ext_resource type="Texture2D" uid="uid://doov1hffmknuo" path="res://icon.svg" id="1_8afob"]
 [ext_resource type="Script" uid="uid://boyogf1pmxmdo" path="res://scenes/player/player.gd" id="1_dovo2"]
+[ext_resource type="Texture2D" uid="uid://cqscu3u5otv0r" path="res://assets/sprites/player/sheep.png" id="2_gmlin"]
 [ext_resource type="Script" uid="uid://dc50cfcryk6xp" path="res://scenes/player/debug_layer.gd" id="3_gmlin"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dovo2"]
@@ -14,8 +14,9 @@ script = ExtResource("1_dovo2")
 shape = SubResource("RectangleShape2D_dovo2")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=724449612]
+modulate = Color(1, 1, 1, 0.9411765)
 scale = Vector2(0.2, 0.2)
-texture = ExtResource("1_8afob")
+texture = ExtResource("2_gmlin")
 
 [node name="DebugLayer" type="Node2D" parent="." unique_id=1739503085]
 script = ExtResource("3_gmlin")

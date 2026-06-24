@@ -1,6 +1,8 @@
 extends Area2D
 class_name Playfield
 
+const GRASS_TEXTURE := preload("res://assets/sprites/playfield/grass.jpeg")
+
 var NormalState = preload("res://scenes/playfield/states/normal_state.gd")
 signal clicked(playfield)
 
@@ -17,8 +19,21 @@ func _ready():
 
 func _draw():
 	var outer_rect := rect.grow(10)
-	draw_rect(outer_rect, Color.WHITE)
-	draw_rect(rect, Color.BLACK)
+
+	# Grass fill
+	draw_texture_rect(
+		GRASS_TEXTURE,
+		rect,
+		true # tile/repeat
+	)
+
+	# Border only
+	draw_rect(
+		outer_rect,
+		Color.WHITE,
+		false,
+		10.0
+	)
 
 func _physics_process(delta):
 	current_state.physics_update(self, delta)

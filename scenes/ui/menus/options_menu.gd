@@ -10,6 +10,7 @@ var return_to_main_menu_on_back := true
 var _updating_slider := false
 
 func _ready() -> void:
+	GameLoader.install_menu_button_sfx(self)
 	volume_slider.value_changed.connect(_on_volume_slider_value_changed)
 	back_button.pressed.connect(_on_back_pressed)
 

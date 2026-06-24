@@ -7,6 +7,7 @@ const LEVELS_PATH = "res://levels/"
 
 func _ready():
 	generate_level_buttons()
+	GameLoader.install_menu_button_sfx(self)
 	regresar.pressed.connect(_on_back_pressed)
 
 func generate_level_buttons():

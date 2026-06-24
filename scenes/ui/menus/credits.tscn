@@ -88,4 +88,4 @@ horizontal_alignment = 1
 [node name="BackButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1827589347]
 custom_minimum_size = Vector2(260, 44)
 layout_mode = 2
-text = "Back"
+text = "Volver al menú"

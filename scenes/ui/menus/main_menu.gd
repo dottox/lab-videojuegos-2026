@@ -14,6 +14,7 @@ var bullet_scene = preload("res://scenes/projectiles/bullet/bullet.tscn")
 var level_loader
 
 func _ready():
+	GameLoader.install_menu_button_sfx(self)
 	GameLoader.start_background_loading()
 	spawn_timer.timeout.connect(_on_spawn_timer_timeout)
 	spawn_timer.start()

@@ -8,6 +8,7 @@ var scroll_speed := -50.0
 var t := 0.0
 
 func _ready() -> void:
+	GameLoader.install_menu_button_sfx(self)
 	back_button.pressed.connect(_on_back_pressed)
 	credits_list.position.y = 220.0
 

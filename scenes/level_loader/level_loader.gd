@@ -258,7 +258,7 @@ func spawn_bullet(pos: Vector2, velocity: Vector2, size: float, color: Variant =
 	if bullet == null:
 		push_warning("Bullet projectile could not be spawned")
 		return
-	bullet.activate(pos, velocity, size, color)
+	bullet.activate(pos, velocity, size)
 
 
 func load_level_config(level_path: String) -> void:
@@ -653,6 +653,7 @@ func _create_pause_overlay() -> void:
 
 	pause_canvas = pause_scene.instantiate()
 	pause_canvas.process_mode = Node.PROCESS_MODE_WHEN_PAUSED
+	GameLoader.install_menu_button_sfx(pause_canvas)
 	add_child(pause_canvas)
 
 	pause_menu_panel = pause_canvas.get_node("Center/MainPanel") as Control
@@ -941,6 +942,7 @@ func _create_result_screen(asset_key: String) -> CanvasLayer:
 		return null
 
 	var result_screen := result_scene.instantiate() as CanvasLayer
+	GameLoader.install_menu_button_sfx(result_screen)
 	add_child(result_screen)
 
 	var score_label := result_screen.get_node("Center/Panel/Margin/Layout/ScoreLabel") as Label

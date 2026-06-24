@@ -77,3 +77,5 @@ libraries/ = SubResource("AnimationLibrary_scpxb")
 
 [node name="DebugLayer" type="Node2D" parent="." unique_id=275542765]
 script = ExtResource("2_scpxb")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=856371142]
