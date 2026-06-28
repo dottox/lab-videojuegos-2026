@@ -3,14 +3,9 @@
 [sub_resource type="GDScript" id="GDScript_mwb40"]
 script/source = "extends Node2D
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+	print(\">>> GAME.TSCN READY: main scene loaded correctly\")
+	GameLoader.call_deferred(\"load_scene\", \"cinematic_intro\")
 "
 
 [node name="game" type="Node2D" unique_id=952825688]
