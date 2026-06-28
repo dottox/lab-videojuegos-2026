@@ -1,7 +1,9 @@
-[gd_scene format=3 uid="uid://cku64yy6cnyj8"]
+[gd_scene format=3 uid="uid://biom2dbydn4ga"]
 
-[ext_resource type="Script" uid="uid://ymvxeo2afalm" path="res://scenes/ui/progress_bar/rhythm_hud.gd" id="1_ly7tx"]
-[ext_resource type="Texture2D" uid="uid://fh6gxhyxm38c" path="res://assets/sprites/hud/hud_bar.jpeg" id="2_hudbar"]
+[ext_resource type="Script" path="res://scenes/ui/progress_bar/rhythm_hud.gd" id="1_ly7tx"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_lg101"]
+load_path = "res://.godot/imported/hud_bar.jpeg-8a7263b9ed16698adfb4ce1225c7d9b8.ctex"
 
 [sub_resource type="Shader" id="Shader_dash_cooldown"]
 code = "shader_type canvas_item;
@@ -58,7 +60,7 @@ anchor_right = 0.85
 offset_bottom = 144.0
 grow_horizontal = 2
 mouse_filter = 2
-texture = ExtResource("2_hudbar")
+texture = SubResource("CompressedTexture2D_lg101")
 expand_mode = 1
 metadata/_edit_use_anchors_ = true
 
@@ -166,6 +168,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="HudBackgroundFlash" type="ColorRect" parent="." unique_id=50691939]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
