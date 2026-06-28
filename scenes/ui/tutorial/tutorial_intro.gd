@@ -59,4 +59,4 @@ func _is_continue_event(event: InputEvent) -> bool:
 
 func _on_delay_timer_timeout() -> void:
 	can_continue = true
-	continue_label.text = "Press any key to continue"
+	continue_label.text = "Presiona cualquier tecla para continuar"

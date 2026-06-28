@@ -635,10 +635,10 @@ func _spawn_shield_bullet_from_config(proj: Projectile) -> void:
 	if playfield == null:
 		return
 
-	var spawn_pos := proj.pos
-	var speed: float = proj.speed if proj.speed > 0 else bullet_clap_speed
-	var velocity := spawn_pos.direction_to(player.global_position) * speed
+	var spawn_pos := _get_nearest_shield_spawn_anchor(proj.pos, playfield.get_bounds())
 	var center := playfield.get_center()
+	var speed: float = proj.speed if proj.speed > 0 else bullet_clap_speed
+	var velocity: Vector2 = spawn_pos.direction_to(center) * speed
 	spawn_bullet(spawn_pos, velocity, bullet_size, Color.RED)
 
 
