@@ -212,7 +212,7 @@ func get_asset(key: String) -> PackedScene:
 	return res
 	
 func load_scene(key: String):
-	var scene: PackedScene = get_asset(key)
+	var scene: PackedScene = loaded_resources.get(key)
 	if scene == null and common_assets.has(key):
 		scene = load(common_assets[key])
 		if scene != null:

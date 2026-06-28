@@ -4,6 +4,7 @@ extends Control
 @onready var regresar: Button = $CenterContainer/Panel/MarginContainer/VBoxContainer/Regresar
 
 const LEVELS_PATH = "res://levels/"
+const DEFAULT_LEVEL_ORDER := 1000
 
 func _ready():
 	generate_level_buttons()
@@ -19,19 +20,51 @@ func generate_level_buttons():
 
 	dir.list_dir_begin()
 
+	var levels := []
 	var level_name = dir.get_next()
 	while level_name != "":
-		create_level_button(level_name)
+		if not dir.current_is_dir() and level_name.get_extension().to_lower() == "cfg":
+			levels.append(_read_level_entry(level_name))
 		level_name = dir.get_next()
 
 	dir.list_dir_end()
+
+	levels.sort_custom(func(a, b):
+		var order_a := int(a.get("order", DEFAULT_LEVEL_ORDER))
+		var order_b := int(b.get("order", DEFAULT_LEVEL_ORDER))
+		if order_a == order_b:
+			return str(a.get("display_name", "")) < str(b.get("display_name", ""))
+		return order_a < order_b
+	)
+
+	for level_entry in levels:
+		create_level_button(level_entry)
 	
-func create_level_button(level_name):
+
+func _read_level_entry(level_name: String) -> Dictionary:
+	var level_path := LEVELS_PATH + level_name
+	var display_name := level_name.get_basename().replace("_", " ").capitalize()
+	var order := DEFAULT_LEVEL_ORDER
+
+	var config := ConfigFile.new()
+	if config.load(level_path) == OK:
+		var meta_name := str(config.get_value("meta", "display_name", "")).strip_edges()
+		if meta_name != "":
+			display_name = meta_name
+		order = int(config.get_value("meta", "order", order))
+
+	return {
+		"display_name": display_name,
+		"order": order,
+		"path": level_path,
+	}
+
+
+func create_level_button(level_entry: Dictionary):
 	var button = Button.new()
 
-	button.text = level_name.capitalize().left(-4)
-	
-	var level_path = LEVELS_PATH + level_name
+	button.text = str(level_entry.get("display_name", ""))
+	var level_path := str(level_entry.get("path", ""))
 
 	button.pressed.connect(
 		func():

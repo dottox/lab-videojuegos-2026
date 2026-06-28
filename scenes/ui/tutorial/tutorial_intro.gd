@@ -1,6 +1,6 @@
 extends Control
 
-const TUTORIAL_LEVEL_PATH := "res://levels/nivel_rap_completo.cfg"
+const TUTORIAL_LEVEL_PATH := "res://levels/tutorial.cfg"
 const INPUT_DELAY := 1.25
 
 @onready var title_label: Label = $CenterContainer/Panel/MarginContainer/Layout/Title
@@ -28,7 +28,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not can_continue:
 		return
 
-	if event is InputEventKey and event.pressed and not event.echo:
+	if _is_continue_event(event):
 		get_viewport().set_input_as_handled()
 		_advance()
 
@@ -45,7 +45,18 @@ func _advance() -> void:
 	if screen_index < titles.size() - 1:
 		_show_screen(screen_index + 1)
 		return
+	GameLoader.load_level(TUTORIAL_LEVEL_PATH)
+
+
+func _is_continue_event(event: InputEvent) -> bool:
+	if event is InputEventKey:
+		return event.pressed and not event.echo
+	if event is InputEventMouseButton:
+		return event.pressed and event.button_index == MOUSE_BUTTON_LEFT
+	if event is InputEventScreenTouch:
+		return event.pressed
+	return false
 
 func _on_delay_timer_timeout() -> void:
 	can_continue = true
-	continue_label.text = "Press any key to continue"
+	continue_label.text = "Presiona cualquier tecla para continuar"
