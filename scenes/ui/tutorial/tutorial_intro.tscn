@@ -80,7 +80,7 @@ text = "Modo escudo"
 [node name="Body" type="Label" parent="CenterContainer/Panel/MarginContainer/Layout/ModesContent/ShieldRow/Text" unique_id=1731215690]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Levanta tu escudo (WASD) para bloquear el peligro, trata de sobrevivir a patrones complicados."
+text = "En la segunda parte quedas al centro. Pulsa la direccion del proyectil para bloquear."
 autowrap_mode = 3
 
 [node name="RhythmRow" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/Layout/ModesContent" unique_id=579172299]
@@ -98,12 +98,12 @@ theme_override_constants/separation = 4
 [node name="Title" type="Label" parent="CenterContainer/Panel/MarginContainer/Layout/ModesContent/RhythmRow/Text" unique_id=687840958]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Modo Ritmo"
+text = "Ritmos guiados"
 
 [node name="Body" type="Label" parent="CenterContainer/Panel/MarginContainer/Layout/ModesContent/RhythmRow/Text" unique_id=588073928]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Pegales (J) a las notas en tiempo con el beat cuando lleguen al centro de la barra de ritmo."
+text = "Las apariciones siguen tiempos preparados de la musica, una mecanica por bloque."
 autowrap_mode = 3
 
 [node name="BulletRow" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/Layout/ModesContent" unique_id=1705997397]
@@ -127,7 +127,7 @@ text = "Modo Bullet Hell"
 [node name="Body" type="Label" parent="CenterContainer/Panel/MarginContainer/Layout/ModesContent/BulletRow/Text" unique_id=2050481978]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Lee los patrones de los proyectiles, continua moviendote (WASD), y usa tu dash para aprovechar los espacios pequeños."
+text = "Primero esquiva balas normales; despues aparecen estallidos circulares lentos."
 autowrap_mode = 3
 
 [node name="ControlsContent" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer/Layout" unique_id=236124992]
@@ -155,14 +155,14 @@ text = "Movimiento"
 [node name="Body" type="Label" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent/MoveRow/Text" unique_id=869726765]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "WASD o ↑→↓←."
+text = "WASD o flechas."
 
 [node name="HitRow" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent" unique_id=613934251]
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="HitIcon" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent/HitRow" unique_id=1166148768 instance=ExtResource("6")]
+[node name="HitIcon" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent/HitRow" unique_id=1166148768 instance=ExtResource("2")]
 
 [node name="Text" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent/HitRow" unique_id=269828275]
 custom_minimum_size = Vector2(520, 0)
@@ -172,12 +172,12 @@ theme_override_constants/separation = 4
 [node name="Title" type="Label" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent/HitRow/Text" unique_id=1108919541]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
-text = "Notas de ritmo"
+text = "Escudo"
 
 [node name="Body2" type="Label" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent/HitRow/Text" unique_id=1927750116]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Presiona la H cuando la nota este en el centro."
+text = "En modo escudo, pulsa WASD o flechas hacia el peligro."
 
 [node name="DashRow" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent" unique_id=1803973814]
 layout_mode = 2
@@ -200,7 +200,7 @@ text = "Dash"
 [node name="Body" type="Label" parent="CenterContainer/Panel/MarginContainer/Layout/ControlsContent/DashRow/Text" unique_id=348384733]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
-text = "Presiona la J para hacer un movimiento veloz."
+text = "Presiona J o Z para hacer un movimiento veloz."
 
 [node name="Spacer" type="Control" parent="CenterContainer/Panel/MarginContainer/Layout" unique_id=694384580]
 custom_minimum_size = Vector2(0, 10)

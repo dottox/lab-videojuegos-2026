@@ -1,6 +1,6 @@
 extends Control
 
-const NEXT_SFX_PATH := "res://assets/sfx/cinematic_next.mp3"
+const NEXT_SFX_PATH := "res://assets/fsx/cinematic_next.mp3"
 
 const CINEMATIC_PAGES := [
 	{

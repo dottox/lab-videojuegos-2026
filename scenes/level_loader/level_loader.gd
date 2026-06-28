@@ -1,6 +1,8 @@
 extends Node2D
 class_name LevelLoader
 
+const TUTORIAL_HINT_OVERLAY_PATH := "res://scenes/ui/tutorial/tutorial_hint_overlay.tscn"
+
 @onready var entities: Node2D = $entities
 @onready var PlayfieldLayer: Node2D = $PlayfieldLayer
 @onready var music: AudioStreamPlayer2D = $AudioStreamPlayer2D
@@ -24,6 +26,7 @@ var music_path := ""
 var music_id := ""
 var bpm: float = 120.0
 var seconds_per_beat := 0.5
+var level_end_time_ms := -1.0
 
 var next_projectile_index: int = 0
 var projectile_configs: Array[Projectile] = []
@@ -50,6 +53,10 @@ var bullets_per_clap: int = 16
 var bullet_size: int = 5
 
 var level_config: Dictionary = {}
+var tutorial_hint_configs: Array[Dictionary] = []
+var tutorial_hint_overlay: CanvasLayer
+var next_tutorial_hint_index := 0
+var tutorial_hint_hide_at_ms := -1.0
 
 var projectile_pools: Dictionary = {}
 var projectile_pool_size: int = 100
@@ -138,6 +145,7 @@ func load_level(level_path: String) -> void:
 	spawn_player()
 	init_screen_effects()
 	init_progress_bar()
+	init_tutorial_hints()
 	_create_pause_overlay()
 	_prepare_projectile_schedule()
 	_apply_initial_phase()
@@ -265,8 +273,12 @@ func load_level_config(level_path: String) -> void:
 	level_config = {}
 	projectile_configs.clear()
 	phase_configs.clear()
+	tutorial_hint_configs.clear()
+	level_end_time_ms = -1.0
 	next_projectile_index = 0
 	next_phase_index = 0
+	next_tutorial_hint_index = 0
+	tutorial_hint_hide_at_ms = -1.0
 
 	if not FileAccess.file_exists(level_path):
 		push_warning("Level config not found: %s" % level_path)
@@ -287,13 +299,13 @@ func parse_level_cfg(path: String) -> void:
 		if section.begins_with("playfields_"):
 			var playfield: Playfield = playfield_scene.instantiate()
 			var data := _config_section_to_dict(cfg, section)
-			playfield.set_playfield(data.get("id", ""), _array_to_rect2(data.get("rect")))
+			playfield.set_playfield(int(data.get("id", 0)), _array_to_rect2(data.get("rect")))
 			playfield_configs.append(playfield)
 
 		elif section.begins_with("zones_"):
 			var zone: ZoneArea = ZoneArea.new()
 			var data := _config_section_to_dict(cfg, section)
-			zone.set_zone(data.get("id", ""), _array_to_rect2(data.get("rect", [0, 0, 0, 0]), Rect2()))
+			zone.set_zone(int(data.get("id", 0)), _array_to_rect2(data.get("rect", [0, 0, 0, 0]), Rect2()))
 			zone_configs.append(zone)
 
 		elif section.begins_with("projectiles_"):
@@ -321,8 +333,19 @@ func parse_level_cfg(path: String) -> void:
 			phase.type = Phase.normalize_type(str(data.get("type", "bullet_hell_no_rhythm")))
 			phase_configs.append(phase)
 
+		elif section.begins_with("tutorial_hints_"):
+			var data := _config_section_to_dict(cfg, section)
+			tutorial_hint_configs.append({
+				"time_ms": int(data.get("time_ms", 0)),
+				"duration_ms": int(data.get("duration_ms", 4000)),
+				"icon": str(data.get("icon", "")),
+				"title": str(data.get("title", "")),
+				"body": str(data.get("body", "")),
+			})
+
 	projectile_configs.sort_custom(func(a, b): return a.time_ms < b.time_ms)
 	phase_configs.sort_custom(func(a, b): return a.time < b.time)
+	tutorial_hint_configs.sort_custom(func(a, b): return int(a.get("time_ms", 0)) < int(b.get("time_ms", 0)))
 
 func _config_section_to_dict(cfg: ConfigFile, section: String) -> Dictionary:
 	var d: Dictionary = {}
@@ -338,7 +361,9 @@ func apply_level_config() -> void:
 	bpm = float(meta.get("bpm", bpm))
 	seconds_per_beat = 60.0 / bpm if bpm > 0.0 else 0.0
 	start_time_ms = int(meta.get("start_time_ms", 0))
-	start_time_ms = int(meta.get("start_time_ms", 0))
+	level_end_time_ms = float(meta.get("end_time_ms", -1.0))
+	if level_end_time_ms <= start_time_ms:
+		level_end_time_ms = -1.0
 
 	#Si se ejecuta a través de preview, que empiece desde el tiempo que estás editando.
 	if preview_start_time_ms >= 0:
@@ -439,6 +464,62 @@ func init_progress_bar() -> void:
 	_update_hud_screen_filters()
 	if not rythm_bar.rhythm_note_missed.is_connected(_on_rhythm_note_missed):
 		rythm_bar.rhythm_note_missed.connect(_on_rhythm_note_missed)
+
+
+func init_tutorial_hints() -> void:
+	if tutorial_hint_configs.is_empty():
+		return
+
+	var overlay_scene := load(TUTORIAL_HINT_OVERLAY_PATH) as PackedScene
+	if overlay_scene == null:
+		push_warning("No se pudo cargar tutorial_hint_overlay")
+		return
+
+	tutorial_hint_overlay = overlay_scene.instantiate() as CanvasLayer
+	if tutorial_hint_overlay == null:
+		push_warning("tutorial_hint_overlay no es CanvasLayer")
+		return
+
+	tutorial_hint_overlay.process_mode = Node.PROCESS_MODE_PAUSABLE
+	add_child(tutorial_hint_overlay)
+	_prepare_tutorial_hints()
+
+
+func _prepare_tutorial_hints() -> void:
+	next_tutorial_hint_index = 0
+	tutorial_hint_hide_at_ms = -1.0
+	while next_tutorial_hint_index < tutorial_hint_configs.size():
+		var hint := tutorial_hint_configs[next_tutorial_hint_index]
+		var hint_time := int(hint.get("time_ms", 0))
+		var duration := int(hint.get("duration_ms", 4000))
+		if hint_time + duration >= start_time_ms:
+			break
+		next_tutorial_hint_index += 1
+
+
+func process_tutorial_hints() -> void:
+	if tutorial_hint_overlay == null or not is_instance_valid(tutorial_hint_overlay):
+		return
+
+	var current_time_ms := music_timer * 1000.0
+	while next_tutorial_hint_index < tutorial_hint_configs.size():
+		var hint := tutorial_hint_configs[next_tutorial_hint_index]
+		var hint_time := float(hint.get("time_ms", 0))
+		if current_time_ms < hint_time:
+			break
+
+		tutorial_hint_overlay.call("show_hint", hint)
+		tutorial_hint_hide_at_ms = current_time_ms + max(float(hint.get("duration_ms", 4000)), 0.0)
+		next_tutorial_hint_index += 1
+
+	if tutorial_hint_hide_at_ms >= 0.0 and current_time_ms >= tutorial_hint_hide_at_ms:
+		tutorial_hint_overlay.call("hide_hint")
+		tutorial_hint_hide_at_ms = -1.0
+
+
+func _hide_tutorial_hints() -> void:
+	if tutorial_hint_overlay != null and is_instance_valid(tutorial_hint_overlay):
+		tutorial_hint_overlay.call("hide_hint")
 
 
 func _apply_initial_phase() -> void:
@@ -609,11 +690,16 @@ func _physics_process(delta: float) -> void:
 	if game_over:
 		return
 
+	if level_end_time_ms >= 0.0 and music_timer * 1000.0 >= level_end_time_ms:
+		_complete_level()
+		return
+
 	if music.playing:
 		rythm_bar.update_song_time(music_timer)
 		_process_bullet_hell_score(delta)
 
 	process_phases()
+	process_tutorial_hints()
 
 	if Input.is_action_just_pressed("rhythm_hit"):
 		if rythm_bar.judge_hit():
@@ -860,6 +946,7 @@ func _on_player_death_started() -> void:
 	game_over = true
 	music.stop()
 	_deactivate_projectiles()
+	_hide_tutorial_hints()
 
 	if rythm_bar != null and is_instance_valid(rythm_bar):
 		rythm_bar.clear_notes()
@@ -879,14 +966,20 @@ func _on_player_died() -> void:
 
 
 func _on_music_finished() -> void:
+	_complete_level()
+
+
+func _complete_level() -> void:
 	if game_over or level_completed:
 		return
 
 	level_completed = true
 	game_over = true
+	music.stop()
 	low_health_filter_alpha = 0.0
 	background_flash_timer = 0.0
 	_deactivate_projectiles()
+	_hide_tutorial_hints()
 
 	if rythm_bar != null and is_instance_valid(rythm_bar):
 		rythm_bar.clear_notes()
