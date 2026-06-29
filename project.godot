@@ -25,6 +25,13 @@ GameLoader="*uid://baqawd7ky0hwg"
 AudioAnalyzer="*uid://c6mnx5fpylcgy"
 GameSettings="*res://scripts/global/game_settings.gd"
 
+[display]
+
+window/size/viewport_width=1152
+window/size/viewport_height=648
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
+
 [input]
 
 arriba={

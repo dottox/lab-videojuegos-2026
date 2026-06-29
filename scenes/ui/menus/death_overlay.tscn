@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://civ5oyuc2mmnp"]
+[gd_scene load_steps=2 format=3 uid="uid://civ5oyuc2mmnp"]
+
+[ext_resource type="Theme" path="res://scenes/ui/menus/menu_button_theme.tres" id="1_pv4wc"]
 
 [node name="DeathScreen" type="CanvasLayer" unique_id=1907855962]
 layer = 10
@@ -25,6 +27,7 @@ metadata/_edit_use_anchors_ = true
 [node name="Panel" type="PanelContainer" parent="Center" unique_id=1738035851]
 custom_minimum_size = Vector2(360, 260)
 layout_mode = 2
+theme = ExtResource("1_pv4wc")
 
 [node name="Margin" type="MarginContainer" parent="Center/Panel" unique_id=495720978]
 layout_mode = 2
@@ -62,11 +65,11 @@ custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
 [node name="PlayAgainButton" type="Button" parent="Center/Panel/Margin/Layout" unique_id=888848605]
-custom_minimum_size = Vector2(260, 44)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 text = "Intentar de nuevo"
 
 [node name="BackToMenuButton" type="Button" parent="Center/Panel/Margin/Layout" unique_id=635828023]
-custom_minimum_size = Vector2(260, 44)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 text = "Volver al menú"

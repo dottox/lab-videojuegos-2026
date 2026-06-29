@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://dmyjop12m8r0t"]
+[gd_scene load_steps=3 format=3 uid="uid://dmyjop12m8r0t"]
 
 [ext_resource type="Script" uid="uid://bgw656hrgdxs4" path="res://scenes/ui/menus/options_menu.gd" id="1_7y73w"]
+[ext_resource type="Theme" path="res://scenes/ui/menus/menu_button_theme.tres" id="2_8i3e8"]
 
 [node name="OptionsMenu" type="Control" unique_id=846214009]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_8i3e8")
 script = ExtResource("1_7y73w")
 
 [node name="Background" type="ColorRect" parent="." unique_id=168123641]
@@ -73,6 +75,6 @@ text = "100%"
 vertical_alignment = 1
 
 [node name="BackButton" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=912367508]
-custom_minimum_size = Vector2(260, 44)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 text = "Volver"

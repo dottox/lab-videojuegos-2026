@@ -5,6 +5,7 @@ extends Control
 
 const LEVELS_PATH = "res://levels/"
 const DEFAULT_LEVEL_ORDER := 1000
+const MENU_BUTTON_MIN_SIZE := Vector2(280.0, 64.0)
 
 func _ready():
 	generate_level_buttons()
@@ -64,6 +65,7 @@ func create_level_button(level_entry: Dictionary):
 	var button = Button.new()
 
 	button.text = str(level_entry.get("display_name", ""))
+	button.custom_minimum_size = MENU_BUTTON_MIN_SIZE
 	var level_path := str(level_entry.get("path", ""))
 
 	button.pressed.connect(

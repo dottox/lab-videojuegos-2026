@@ -1,0 +1,29 @@
+[gd_resource type="Theme" format=3 uid="uid://di6xwnn3gq0kw"]
+
+[ext_resource type="Texture2D" uid="uid://beaej0e5h44hp" path="res://assets/sprites/hud/wool-button-menu.png" id="1_50u7a"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_menu_button"]
+texture = ExtResource("1_50u7a")
+texture_margin_left = 72.0
+texture_margin_top = 34.0
+texture_margin_right = 72.0
+texture_margin_bottom = 34.0
+content_margin_left = 38.0
+content_margin_top = 12.0
+content_margin_right = 38.0
+content_margin_bottom = 12.0
+
+[resource]
+Button/colors/font_color = Color(0, 0, 0, 1)
+Button/colors/font_disabled_color = Color(0.2, 0.2, 0.2, 1)
+Button/colors/font_focus_color = Color(0, 0, 0, 1)
+Button/colors/font_hover_color = Color(0, 0, 0, 1)
+Button/colors/font_outline_color = Color(0, 0, 0, 0)
+Button/colors/font_pressed_color = Color(0, 0, 0, 1)
+Button/constants/outline_size = 0
+Button/font_sizes/font_size = 22
+Button/styles/disabled = SubResource("StyleBoxTexture_menu_button")
+Button/styles/focus = SubResource("StyleBoxTexture_menu_button")
+Button/styles/hover = SubResource("StyleBoxTexture_menu_button")
+Button/styles/normal = SubResource("StyleBoxTexture_menu_button")
+Button/styles/pressed = SubResource("StyleBoxTexture_menu_button")

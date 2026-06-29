@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://b1lr7apl77xor"]
+[gd_scene load_steps=3 format=3 uid="uid://b1lr7apl77xor"]
 
 [ext_resource type="Script" uid="uid://bi7lendmsmcpe" path="res://scenes/ui/menus/level_selector.gd" id="1_e5wmo"]
+[ext_resource type="Theme" path="res://scenes/ui/menus/menu_button_theme.tres" id="2_6045l"]
 
 [node name="LevelSelector" type="Control" unique_id=256220477]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_6045l")
 script = ExtResource("1_e5wmo")
 
 [node name="Background" type="ColorRect" parent="." unique_id=111111111]
@@ -65,6 +67,6 @@ custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="Regresar" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=349620845]
-custom_minimum_size = Vector2(260, 44)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 text = "Volver"

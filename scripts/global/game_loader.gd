@@ -6,10 +6,6 @@ signal debug_draw_toggled(enabled: bool)
 const DEBUG_TOGGLE_ACTION := "toggle_debug_draw"
 const PAUSE_ACTION := "pause_game"
 const MENU_BUTTON_SFX_PATH := "res://assets/fsx/menu_effect.mp3"
-const MENU_BUTTON_TEXTURE_PATHS := [
-	"res://assets/sprites/hud/wool-button-menu.png",
-]
-const MENU_BUTTON_MIN_SIZE := Vector2(280.0, 64.0)
 
 var common_assets = {
 	"player": "res://scenes/player/player.tscn",
@@ -40,7 +36,6 @@ var sync_asset_keys := {
 
 var debug_draw_enabled := false
 var menu_button_sfx_player: AudioStreamPlayer
-var menu_button_style: StyleBoxTexture
 
 func _ready() -> void:
 	_ensure_debug_toggle_action()
@@ -69,7 +64,6 @@ func set_debug_draw_enabled(enabled: bool) -> void:
 func install_menu_button_sfx(root: Node) -> void:
 	if root is Button:
 		_connect_menu_button_sfx(root)
-		_apply_menu_button_style(root)
 
 	for child in root.get_children():
 		install_menu_button_sfx(child)
@@ -88,60 +82,6 @@ func _connect_menu_button_sfx(button: Button) -> void:
 	var callback := Callable(self, "play_menu_button_sfx")
 	if not button.button_down.is_connected(callback):
 		button.button_down.connect(callback)
-
-
-func _apply_menu_button_style(button: Button) -> void:
-	var style := _get_menu_button_style()
-	if style != null:
-		for state in ["normal", "hover", "pressed", "focus", "disabled"]:
-			button.add_theme_stylebox_override(state, style)
-
-	button.add_theme_color_override("font_color", Color.BLACK)
-	button.add_theme_color_override("font_hover_color", Color.BLACK)
-	button.add_theme_color_override("font_pressed_color", Color.BLACK)
-	button.add_theme_color_override("font_focus_color", Color.BLACK)
-	button.add_theme_color_override("font_disabled_color", Color(0.2, 0.2, 0.2, 1.0))
-	button.add_theme_color_override("font_outline_color", Color.TRANSPARENT)
-	button.add_theme_constant_override("outline_size", 0)
-	button.add_theme_font_size_override("font_size", 22)
-	button.custom_minimum_size = button.custom_minimum_size.max(MENU_BUTTON_MIN_SIZE)
-
-
-func _get_menu_button_style() -> StyleBoxTexture:
-	if menu_button_style != null:
-		return menu_button_style
-
-	var texture := _load_menu_button_texture()
-	if texture == null:
-		return null
-
-	menu_button_style = StyleBoxTexture.new()
-	menu_button_style.texture = texture
-	menu_button_style.texture_margin_left = 72.0
-	menu_button_style.texture_margin_top = 34.0
-	menu_button_style.texture_margin_right = 72.0
-	menu_button_style.texture_margin_bottom = 34.0
-	menu_button_style.content_margin_left = 38.0
-	menu_button_style.content_margin_top = 12.0
-	menu_button_style.content_margin_right = 38.0
-	menu_button_style.content_margin_bottom = 12.0
-	return menu_button_style
-
-
-func _load_menu_button_texture() -> Texture2D:
-	for path in MENU_BUTTON_TEXTURE_PATHS:
-		if not FileAccess.file_exists(path):
-			continue
-
-		var imported_texture := load(path) as Texture2D
-		if imported_texture != null:
-			return imported_texture
-
-		var image := Image.load_from_file(path)
-		if image != null and not image.is_empty():
-			return ImageTexture.create_from_image(image)
-
-	return null
 
 
 func _ensure_menu_button_sfx_player() -> void:

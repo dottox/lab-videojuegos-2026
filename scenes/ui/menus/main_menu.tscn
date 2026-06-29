@@ -1,7 +1,8 @@
-[gd_scene format=3 uid="uid://bas7kye5q42ee"]
+[gd_scene load_steps=4 format=3 uid="uid://bas7kye5q42ee"]
 
 [ext_resource type="Script" uid="uid://d76taju6g8gf" path="res://scenes/ui/menus/main_menu.gd" id="1_flhq8"]
 [ext_resource type="Texture2D" uid="uid://cwni5yd6noiqv" path="res://assets/sprites/hud/title.png" id="2_h1kbi"]
+[ext_resource type="Theme" path="res://scenes/ui/menus/menu_button_theme.tres" id="3_vvm07"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_h1kbi"]
 
@@ -12,6 +13,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("3_vvm07")
 script = ExtResource("1_flhq8")
 
 [node name="Background" type="ColorRect" parent="." unique_id=111111111]
@@ -50,37 +52,37 @@ texture = ExtResource("2_h1kbi")
 expand_mode = 3
 
 [node name="Jugar" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=922696214]
-custom_minimum_size = Vector2(200, 35)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Jugar"
 
 [node name="Tutorial" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1734480198]
-custom_minimum_size = Vector2(200, 35)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Tutorial"
 
 [node name="Editor" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1768348047]
-custom_minimum_size = Vector2(200, 35)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Editor"
 
 [node name="Opciones" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=1823475081]
-custom_minimum_size = Vector2(200, 35)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Opciones"
 
 [node name="Creditos" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=458563569]
-custom_minimum_size = Vector2(200, 35)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Creditos"
 
 [node name="Salir" type="Button" parent="CenterContainer/Panel/MarginContainer/VBoxContainer" unique_id=2007650609]
-custom_minimum_size = Vector2(200, 35)
+custom_minimum_size = Vector2(280, 64)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Salir"

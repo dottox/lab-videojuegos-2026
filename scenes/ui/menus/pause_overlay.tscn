@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://bbpg6glpykl7r"]
+[gd_scene load_steps=2 format=3 uid="uid://bbpg6glpykl7r"]
+
+[ext_resource type="Theme" path="res://scenes/ui/menus/menu_button_theme.tres" id="1_a66qx"]
 
 [node name="PauseMenu" type="CanvasLayer"]
 layer = 20
@@ -25,6 +27,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="MainPanel" type="PanelContainer" parent="Center"]
 custom_minimum_size = Vector2(320, 260)
+theme = ExtResource("1_a66qx")
 
 [node name="Margin" type="MarginContainer" parent="Center/MainPanel"]
 theme_override_constants/margin_left = 28
@@ -42,13 +45,13 @@ text = "Pausa"
 horizontal_alignment = 1
 
 [node name="ResumeButton" type="Button" parent="Center/MainPanel/Margin/Layout"]
-custom_minimum_size = Vector2(240, 44)
+custom_minimum_size = Vector2(280, 64)
 text = "Reanudar"
 
 [node name="OptionsButton" type="Button" parent="Center/MainPanel/Margin/Layout"]
-custom_minimum_size = Vector2(240, 44)
+custom_minimum_size = Vector2(280, 64)
 text = "Opciones"
 
 [node name="BackToMenuButton" type="Button" parent="Center/MainPanel/Margin/Layout"]
-custom_minimum_size = Vector2(240, 44)
+custom_minimum_size = Vector2(280, 64)
 text = "Volver al menu"
